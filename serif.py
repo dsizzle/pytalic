@@ -3,15 +3,16 @@
 # serif class definitions
 #
 #
-import splines
-import polygon
-import nibs_qt
-import control_vertex
-import stroke_qt
 
 import math
 import time
 import random
+
+import shapes.splines
+import shapes.polygon
+import nibs_qt
+import control_vertex
+import stroke_qt
 
 from PyQt4 import QtCore, QtGui
 
