@@ -74,8 +74,8 @@ class Nib:
                             
 	def draw(self, gc, x,y,x2=None,y2=None, seed=None):
 
-		pts = polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
-		pts = polygon.normalizePolyRotation(pts)
+		pts = shapes.polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
+		pts = shapes.polygon.normalizePolyRotation(pts)
 		
 		poly = QtGui.QPolygon(4)
 		poly.setPoint(0, QtCore.QPoint(pts[0][0],pts[0][1]))
@@ -158,10 +158,10 @@ class ScrollNib(Nib):
 		
 	def draw(self, gc, x,y,x2=None,y2=None):
 		
-		pts = polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
-		pts = polygon.normalizePolyRotation(pts)
+		pts = shapes.polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
+		pts = shapes.polygon.normalizePolyRotation(pts)
 		
-		lpts = polygon.calcPoly(x, y, self.__split_x, self.__split_y, x2, y2)
+		lpts = shapes.polygon.calcPoly(x, y, self.__split_x, self.__split_y, x2, y2)
 		
 		lpoly = QtGui.QPolygon(4)
 		lpoly.setPoint(0, QtCore.QPoint(lpts[0][0],lpts[0][1]))
@@ -169,7 +169,7 @@ class ScrollNib(Nib):
 		lpoly.setPoint(2, QtCore.QPoint(lpts[2][0],lpts[2][1]))
 		lpoly.setPoint(3, QtCore.QPoint(lpts[3][0],lpts[3][1]))
 		
-		rpts = polygon.calcPoly(x+self.nibwidth_x+self.__split_x, 
+		rpts = shapes.polygon.calcPoly(x+self.nibwidth_x+self.__split_x, 
 			y-self.nibwidth_y-self.__split_y, 
 			self.__split_x, self.__split_y, 
 			x2+self.nibwidth_x+self.__split_x, y2-self.nibwidth_y-self.__split_y)
@@ -223,8 +223,8 @@ class BrushNib(Nib):
  		
 	def draw(self, dc, x, y, x2=None,y2=None):
 			
-		pts = polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
-		pts = polygon.normalizePolyRotation(pts)
+		pts = shapes.polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
+		pts = shapes.polygon.normalizePolyRotation(pts)
 		
 		xp = x - self.nibwidth_x
 		xp2 = x + self.nibwidth_x
