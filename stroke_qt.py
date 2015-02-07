@@ -18,7 +18,7 @@ from PyQt4 import QtCore, QtGui
 
 class Stroke(shapes.splines.BezierSpline):
 	def __init__(self, dimension=2):
-		splines.BezierSpline.__init__(self, dimension)
+		shapes.splines.BezierSpline.__init__(self, dimension)
 		#splines.CatmullRomSpline.__init__(self, 2.0)
 		self.nib = None
 		
@@ -47,7 +47,7 @@ class Stroke(shapes.splines.BezierSpline):
 	
 	def straighten(self):
 		tempCv = []
-		oldCv = splines.BezierSpline.getCtrlVertices(self)
+		oldCv = shapes.splines.BezierSpline.getCtrlVertices(self)
 		
 		start = self.ctrlVerts[0]
 		end = self.ctrlVerts[-1]
@@ -92,10 +92,10 @@ class Stroke(shapes.splines.BezierSpline):
 		self.__startSerif = None
 
 	def calcCurvePoints(self):
-		numPts = splines.BezierSpline.getNumCurvePoints(self)
-		splines.BezierSpline.setNumCurvePoints(self, numPts)
+		numPts = shapes.splines.BezierSpline.getNumCurvePoints(self)
+		shapes.splines.BezierSpline.setNumCurvePoints(self, numPts)
 				         
-		crvPts = splines.BezierSpline.calcCurvePoints(self)
+		crvPts = shapes.splines.BezierSpline.calcCurvePoints(self)
 		
 		minx = 9999
 		miny = 9999
@@ -103,7 +103,7 @@ class Stroke(shapes.splines.BezierSpline):
 		return crvPts[:]
 	
 	def calcCtrlVertices(self, pts):
-		return splines.BezierSpline.calcCtrlVertices(self, pts)
+		return shapes.splines.BezierSpline.calcCtrlVertices(self, pts)
 	
 	def getCtrlVertices(self):
 		return self.__strokeCtrlVerts[:]
@@ -125,7 +125,7 @@ class Stroke(shapes.splines.BezierSpline):
 		return list(pts)
 		
 	def setCtrlVerticesFromList(self, pts):
-		splines.BezierSpline.setCtrlVertices(self, pts)
+		shapes.splines.BezierSpline.setCtrlVertices(self, pts)
 		self.__strokeCtrlVerts = []
 		
 		pos = 1
@@ -158,7 +158,7 @@ class Stroke(shapes.splines.BezierSpline):
 	def updateCtrlVertices(self):
 		pts = self.getCtrlVerticesAsList()
 		
-		splines.BezierSpline.setCtrlVertices(self, pts)	
+		shapes.splines.BezierSpline.setCtrlVertices(self, pts)	
 		self.calcCurvePoints()
 		
 	def deleteCtrlVertex(self, pt):
