@@ -16,7 +16,7 @@ import serif
 
 from PyQt4 import QtCore, QtGui
 
-class Stroke(splines.BezierSpline):
+class Stroke(shapes.splines.BezierSpline):
 	def __init__(self, dimension=2):
 		splines.BezierSpline.__init__(self, dimension)
 		#splines.CatmullRomSpline.__init__(self, 2.0)
