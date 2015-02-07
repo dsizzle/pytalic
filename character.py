@@ -85,7 +85,7 @@ class Character(object):
 		rawCv = []
 		tempCv = []
 		
-		newPts = dp.simplify_points(pts, 10)
+		newPts = thirdparty.dp.simplify_points(pts, 10)
 		startX, startY = newPts[0]
 		numPts = len(newPts)
 		while ((numPts % 4) != 0):
