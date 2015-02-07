@@ -1,5 +1,5 @@
 import stroke_qt
-import dp
+import third-party.dp
 
 import random
 import math
