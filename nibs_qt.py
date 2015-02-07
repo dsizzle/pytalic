@@ -5,8 +5,9 @@
 
 import math
 import random
-import polygon
 import time
+
+import shapes.polygon
 
 from PyQt4 import QtCore, QtGui
 
