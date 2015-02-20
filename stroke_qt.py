@@ -295,7 +295,7 @@ class Stroke(shapes.splines.BezierSpline):
 		else:
 			for quad in self.__boundBoxes:
 				
-				if (polygon.__windingNum__(modPt, quad, 4) == 1):
+				if (shapes.polygon.__windingNum__(modPt, quad, 4) == 1):
 					inside = 1
 					break
 					
