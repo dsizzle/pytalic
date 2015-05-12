@@ -48,11 +48,11 @@ class controlVertex(object):
 		return self.__selected
 		
 	def setLeftHandlePos(self, x, y):
+		oldLPos = self.__leftHandlePos
+		oldRPos = self.__rightHandlePos
+		
 		if (self.__behavior == SMOOTH):
 			if (self.__leftHandlePos and self.__rightHandlePos and self.__pos):
-				oldLPos = self.__leftHandlePos
-				oldRPos = self.__rightHandlePos
-					
 				oldx = oldLPos[0] - self.__pos[0]
 				oldy = oldLPos[1] - self.__pos[1]
 				ordx = self.__pos[0] - oldRPos[0]
@@ -69,19 +69,10 @@ class controlVertex(object):
 				self.__rightHandlePos = (self.__pos[0] + rdx, self.__pos[1] + rdy)
 		elif (self.__behavior == SYMMETRIC):
 			if (self.__leftHandlePos and self.__rightHandlePos and self.__pos):
-				oldLPos = self.__leftHandlePos
-				oldRPos = self.__rightHandlePos
-					
 				oldx = oldLPos[0] - self.__pos[0]
 				oldy = oldLPos[1] - self.__pos[1]
-				ordx = self.__pos[0] - oldRPos[0]
-				ordy = self.__pos[1] - oldRPos[1]
-				llen = math.sqrt(float(oldx * oldx) + float(oldy * oldy))
-				rlen = math.sqrt(float(ordx * ordx) + float(ordy * ordy))
-				rdx = (0 - oldx)
-				rdy = (0 - oldy)
 				
-				self.__rightHandlePos = (self.__pos[0] + rdx, self.__pos[1] + rdy)
+				self.__rightHandlePos = (self.__pos[0] - oldx, self.__pos[1] - oldy)
 	
 		self.__leftHandlePos = (x, y)
 		
@@ -92,11 +83,11 @@ class controlVertex(object):
 		self.__leftHandlePos = ()
 		
 	def setRightHandlePos(self, x, y):
+		oldLPos = self.__leftHandlePos
+		oldRPos = self.__rightHandlePos
+
 		if (self.__behavior == SMOOTH):
 			if (self.__leftHandlePos and self.__rightHandlePos and self.__pos):
-				oldLPos = self.__leftHandlePos
-				oldRPos = self.__rightHandlePos
-					
 				oldx = oldLPos[0] - self.__pos[0]
 				oldy = oldLPos[1] - self.__pos[1]
 				ordx = self.__pos[0] - oldRPos[0]
@@ -113,19 +104,10 @@ class controlVertex(object):
 				self.__leftHandlePos = (self.__pos[0] - ldx, self.__pos[1] - ldy)
 		elif (self.__behavior == SYMMETRIC):
 			if (self.__leftHandlePos and self.__rightHandlePos and self.__pos):
-				oldLPos = self.__leftHandlePos
-				oldRPos = self.__rightHandlePos
-					
-				oldx = oldLPos[0] - self.__pos[0]
-				oldy = oldLPos[1] - self.__pos[1]
 				ordx = self.__pos[0] - oldRPos[0]
 				ordy = self.__pos[1] - oldRPos[1]
-				llen = math.sqrt(float(oldx * oldx) + float(oldy * oldy))
-				rlen = math.sqrt(float(ordx * ordx) + float(ordy * ordy))
-				ldx = (0 - ordx)
-				ldy = (0 - ordy)
 				
-				self.__leftHandlePos = (self.__pos[0] - ldx, self.__pos[1] - ldy)
+				self.__leftHandlePos = (self.__pos[0] + ordx, self.__pos[1] + ordy)
 				
 		self.__rightHandlePos = (x, y)
 
@@ -198,6 +180,7 @@ class controlVertex(object):
 			return None
 	
 	def checkForHit(self, x, y, offset):
+		// TODO: remove duplicated pt-in-rect code...use QRect.contains?
 		pt = self.getLeftHandlePos()
 		if (pt):
 			vxmin = pt[0]+offset[0]-self.__handleSize/2 
