@@ -234,36 +234,27 @@ class controlVertex(object):
 		self.__selected = None
 		return 0
 	
-	def setBehaviorToSmooth(self):
-		self.__behavior = SMOOTH
+	def setBehavior(self, newBehavior):
+		self.__behavior = newBehavior
+		
+		if (self.__behavior == SHARP):
+			return
+		
 		if (self.__selected == LEFT_HANDLE):
 			lPos = self.__leftHandlePos
 			self.setLeftHandlePos(lPos[0], lPos[1])
 		elif (self.__selected == RIGHT_HANDLE):
 			rPos = self.__rightHandlePos
 			self.setRightHandlePos(rPos[0], rPos[1])
-		else:
-			# should this be an average? 
-			lPos = self.__leftHandlePos
-			self.setLeftHandlePos(lPos[0], lPos[1])
-		
+			
+	def setBehaviorToSmooth(self):
+		self.setBehavior(SMOOTH)
 		
 	def setBehaviorToSharp(self):
-		self.__behavior = SHARP
+		self.setBehavior(SHARP)
 			
 	def setBehaviorToSymmetric(self):
-		self.__behavior = SYMMETRIC
-		
-		if (self.__selected == LEFT_HANDLE):
-			lPos = self.__leftHandlePos
-			self.setLeftHandlePos(lPos[0], lPos[1])
-		elif (self.__selected == RIGHT_HANDLE):
-			rPos = self.__rightHandlePos
-			self.setRightHandlePos(rPos[0], rPos[1])
-		else:
-			# should this be an average? 
-			lPos = self.__leftHandlePos
-			self.setLeftHandlePos(lPos[0], lPos[1])
+		self.setBehavior(SYMMETRIC)
 		
 	def getBehavior(self):
 		return self.__behavior
