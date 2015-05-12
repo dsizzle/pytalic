@@ -258,16 +258,6 @@ class controlVertex(object):
 		
 	def getBehavior(self):
 		return self.__behavior
-		
-	def setBehavior(self, behavior):
-		if (behavior == SMOOTH):
-			self.setBehaviorToSmooth()
-		elif (behavior == SHARP):
-			self.setBehaviorToSharp()
-		elif (behavior == SYMMETRIC):
-			self.setBehaviorToSymmetric()
-		else:
-			return
 			
 	def draw(self, gc):
 		vert = self.__pos
