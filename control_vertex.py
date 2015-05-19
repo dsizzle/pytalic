@@ -8,7 +8,7 @@ SYMMETRIC 	= 3
 
 LEFT_HANDLE 	= 1
 RIGHT_HANDLE 	= 2
-KNOT 			= 3
+KNOT 		= 3
 
 class controlVertex(object):
 	def __init__(self):
