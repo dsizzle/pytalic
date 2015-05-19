@@ -180,42 +180,32 @@ class controlVertex(object):
 			return None
 	
 	def checkForHit(self, x, y, offset):
-		// TODO: remove duplicated pt-in-rect code...use QRect.contains?
 		pt = self.getLeftHandlePos()
-		if (pt):
-			vxmin = pt[0]+offset[0]-self.__handleSize/2 
-			vxmax = vxmin+self.__handleSize
-			vymin = pt[1]+offset[1]-self.__handleSize/2 
-			vymax = vymin+self.__handleSize 
-			if (x >= vxmin) and (x <= vxmax) and \
-			   (y >= vymin) and (y <= vymax):	
-				self.__selected = LEFT_HANDLE
-				return 1
-				
+		if (pt) and (self.handleHit(x, y, pt, offset)):
+			self.__selected = LEFT_HANDLE
+			return 1
+
 		pt = self.getRightHandlePos()
-		if (pt):
-			vxmin = pt[0]+offset[0]-self.__handleSize/2 
-			vxmax = vxmin+self.__handleSize
-			vymin = pt[1]+offset[1]-self.__handleSize/2 
-			vymax = vymin+self.__handleSize 
-			if (x >= vxmin) and (x <= vxmax) and \
-			   (y >= vymin) and (y <= vymax):	
-				self.__selected = RIGHT_HANDLE
-				return 1
-				
-		pt = self.getPos()
-		if (pt):
-			vxmin = pt[0]+offset[0]-self.__handleSize/2 
-			vxmax = vxmin+self.__handleSize
-			vymin = pt[1]+offset[1]-self.__handleSize/2 
-			vymax = vymin+self.__handleSize 
-			if (x >= vxmin) and (x <= vxmax) and \
-			   (y >= vymin) and (y <= vymax):	
-				self.__selected = KNOT
-				return 1
+		if (pt) and (self.handleHit(x, y, pt, offset)):
+			self.__selected = RIGHT_HANDLE
+			return 1
 		
+		pt = self.getPos()
+		if (pt) and (self.handleHit(x, y, pt, offset)):
+			self.__selected = KNOT
+			return 1
+
 		self.__selected = None
 		return 0
+
+	def handleHit(self, x, y, pt, offset):
+		vxmin = pt[0]+offset[0]-self.__handleSize/2 
+		vxmax = vxmin+self.__handleSize
+		vymin = pt[1]+offset[1]-self.__handleSize/2 
+		vymax = vymin+self.__handleSize 
+		if (x >= vxmin) and (x <= vxmax) and \
+			(y >= vymin) and (y <= vymax):	
+			return True		
 	
 	def setBehavior(self, newBehavior):
 		self.__behavior = newBehavior
