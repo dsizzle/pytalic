@@ -160,8 +160,13 @@ class ScrollNib(Nib):
 		
 		pts = shapes.polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
 		pts = shapes.polygon.normalizePolyRotation(pts)
+		# should only calc these when nibsize or splitsize changes...
+		remx = (self.nibwidth_x-self.__split_x)/2
+		remy = (self.nibwidth_y-self.__split_y)/2
+		splitx = (self.__split_x+remx)
+		splity = (self.__split_y+remy)
 		
-		lpts = shapes.polygon.calcPoly(x, y, self.__split_x, self.__split_y, x2, y2)
+		lpts = shapes.polygon.calcPoly(x+splitx, y-splity, remx, remy, x2+splitx, y2-splity)
 		
 		lpoly = QtGui.QPolygon(4)
 		lpoly.setPoint(0, QtCore.QPoint(lpts[0][0],lpts[0][1]))
@@ -169,10 +174,10 @@ class ScrollNib(Nib):
 		lpoly.setPoint(2, QtCore.QPoint(lpts[2][0],lpts[2][1]))
 		lpoly.setPoint(3, QtCore.QPoint(lpts[3][0],lpts[3][1]))
 		
-		rpts = shapes.polygon.calcPoly(x+self.nibwidth_x+self.__split_x, 
-			y-self.nibwidth_y-self.__split_y, 
-			self.__split_x, self.__split_y, 
-			x2+self.nibwidth_x+self.__split_x, y2-self.nibwidth_y-self.__split_y)
+		rpts = shapes.polygon.calcPoly(x-splitx, 
+			y+splity, 
+			remx, remy, 
+			x2-splitx, y2+splity)
 		
 		rpoly = QtGui.QPolygon(4)
 		rpoly.setPoint(0, QtCore.QPoint(rpts[0][0],rpts[0][1]))
