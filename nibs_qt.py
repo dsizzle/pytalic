@@ -12,7 +12,7 @@ import shapes.polygon
 from PyQt4 import QtCore, QtGui
 
 # move color to stroke
-class Nib:
+class Nib(object):
 	def __init__(self, width=5, angle=40, color=QtGui.QColor(125,25,25)): #FL_BLACK):
 		if (angle < 0):
 			angle = 180+angle
@@ -136,23 +136,31 @@ class ScrollNib(Nib):
 		self.split = split
 		if split>width:
 			split = 0
-		Nib.__init__(self, width, angle, color)
-		self.__split_x = (split) * math.cos(self.angle * 
-		                    math.pi / 180.0)
-		self.__split_y = (split) * math.sin(self.angle * 
-                            math.pi / 180.0)
-        
+		super(ScrollNib, self).__init__(width, angle, color)
+		self.setSplitSize(split)
+
+	def setWidth(self, width):
+		super(ScrollNib, self).setWidth(width)
+		self.setSplitSize(self.split)
+
 	def setSplitSize(self, splitSize):
 		if (splitSize > self.width):
 			splitSize = 0
 			
 		self.split = splitSize
-	
-		self.__split_x = (splitSize) * math.cos(self.angle * 
+
+		splitx = (splitSize) * math.cos(self.angle * 
 							math.pi / 180.0)
-		self.__split_y = (splitSize) * math.sin(self.angle * 
+		splity = (splitSize) * math.sin(self.angle * 
 							math.pi / 180.0)
 	
+		self.__rem_x = (self.nibwidth_x - splitx) / 2
+		self.__rem_y = (self.nibwidth_y - splity) / 2
+
+		self.__split_x = (splitx + self.__rem_x)
+		self.__split_y = (splity + self.__rem_y)
+
+
 	def getSplitSize(self):
 		return self.split
 		
@@ -160,13 +168,10 @@ class ScrollNib(Nib):
 		
 		pts = shapes.polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
 		pts = shapes.polygon.normalizePolyRotation(pts)
-		# should only calc these when nibsize or splitsize changes...
-		remx = (self.nibwidth_x-self.__split_x)/2
-		remy = (self.nibwidth_y-self.__split_y)/2
-		splitx = (self.__split_x+remx)
-		splity = (self.__split_y+remy)
 		
-		lpts = shapes.polygon.calcPoly(x+splitx, y-splity, remx, remy, x2+splitx, y2-splity)
+		lpts = shapes.polygon.calcPoly(x+self.__split_x, y-self.__split_y, 
+			self.__rem_x, self.__rem_y, 
+			x2+self.__split_x, y2-self.__split_y)
 		
 		lpoly = QtGui.QPolygon(4)
 		lpoly.setPoint(0, QtCore.QPoint(lpts[0][0],lpts[0][1]))
@@ -174,10 +179,9 @@ class ScrollNib(Nib):
 		lpoly.setPoint(2, QtCore.QPoint(lpts[2][0],lpts[2][1]))
 		lpoly.setPoint(3, QtCore.QPoint(lpts[3][0],lpts[3][1]))
 		
-		rpts = shapes.polygon.calcPoly(x-splitx, 
-			y+splity, 
-			remx, remy, 
-			x2-splitx, y2+splity)
+		rpts = shapes.polygon.calcPoly(x-self.__split_x, y+self.__split_y, 
+			self.__rem_x, self.__rem_y, 
+			x2-self.__split_x, y2+self.__split_y)
 		
 		rpoly = QtGui.QPolygon(4)
 		rpoly.setPoint(0, QtCore.QPoint(rpts[0][0],rpts[0][1]))
@@ -202,21 +206,9 @@ class ScrollNib(Nib):
 		return pts
 		
 	def setAngle(self, angle):
-		if (angle < 0):
-			angle = 180+angle
+		super(ScrollNib, self).setAngle(angle)
+		self.setSplitSize(self.split)
 
-		angle = angle % 180
-
-		self.angle = angle
-		self.angleRads = (self.angle * math.pi) / 180.0		
-
-		self.nibwidth_x = self.width * math.cos(self.angleRads)
-		self.nibwidth_y = self.width * math.sin(self.angleRads)
-		
-		self.__split_x = (self.split) * math.cos(self.angle * 
-		                    math.pi / 180.0)
-		self.__split_y = (self.split) * math.sin(self.angle * 
-                            math.pi / 180.0)
 # 	 				 		
 # 		
 # 	
@@ -275,8 +267,6 @@ class BrushNib(Nib):
 		
 		looprange = int(dx / (stepsize))
 		
-		#dc.BeginDrawing()
-		
 		self.pen = QtGui.QPen(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), 200), stepsize*3, QtCore.Qt.SolidLine)
 		pen = self.pen
 		brush = self.brush
@@ -285,17 +275,7 @@ class BrushNib(Nib):
 		dc.setBrush(brush)
 		
 		xx = xp
-		for i in range (0, looprange):
-			#xr = random.random()*2.0 - 1.0
-			#yr = random.random()*2.0 - 1.0
-			#xr2 = random.random()*2.0 - 1.0
-			#yr2 = random.random()*2.0 - 1.0
-			
-			#xr = random.random()*(stepsize*2.0) - 1.0
-			#yr = random.random()*(stepsize*2.0) - 1.0
-			#xr2 = random.random()*(stepsize*2.0) - 1.0
-			#yr2 = random.random()*(stepsize*2.0) - 1.0
-			
+		for i in range (0, looprange):	
 			xr = random.random()*4.0 - 1.0
 			yr = random.random()*4.0 - 1.0
 			xr2 = random.random()*4.0 - 1.0
