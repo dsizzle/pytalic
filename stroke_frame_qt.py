@@ -144,12 +144,12 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		editMenu.addAction(editPaste)
 		self.toolBar.addAction(editPaste)
 		
-		editMenu.addSeparator()
+		#editMenu.addSeparator()
 		self.toolBar.addSeparator()
 		
-		editGuidelinePrefs = QtGui.QAction("Guideline Preferences...", self)
-		editGuidelinePrefs.triggered.connect(self.guidelinePrefs_cb)
-		editMenu.addAction(editGuidelinePrefs)
+		# editGuidelinePrefs = QtGui.QAction("Guideline Preferences...", self)
+		# editGuidelinePrefs.triggered.connect(self.guidelinePrefs_cb)
+		# editMenu.addAction(editGuidelinePrefs)
 			
 		viewGuides = QtGui.QAction("Guidelines", self)
 		viewGuides.setStatusTip('Toggle guidelines on/off')
@@ -242,126 +242,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		helpMenu.addAction(helpAbout)
 	
 	def createGuidelinePrefsDlg(self):
-		guides = self.dwgArea.getGuideLines()
-		
-		self.guideLinePrefsDlg.setMinimumSize(300, 250)
-		self.okButton = QtGui.QPushButton("OK", self.guideLinePrefsDlg)
-		QtCore.QObject.connect(self.okButton, QtCore.SIGNAL("clicked()"), self.guideLinePrefsDlgAccept)
-		self.cancelButton = QtGui.QPushButton("Cancel", self.guideLinePrefsDlg)
-		QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL("clicked()"), self.guideLinePrefsDlgCancel)
-		
-		guidelinePrefsMainLayout = QtGui.QVBoxLayout()
-		guidelinePrefsButtonLayout = QtGui.QHBoxLayout()
-		guidelinePrefsButtonLayout.addWidget(self.okButton)
-		guidelinePrefsButtonLayout.addWidget(self.cancelButton)
-		guidelinePrefsLayout = QtGui.QVBoxLayout()
-		
-		mainLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		mainLabel.setText("Note: All units are nib-widths.")
-		mainLabelLayout = QtGui.QHBoxLayout()
-		mainLabelLayout.addWidget(mainLabel)
-		
-		self.baseHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		self.baseHeightLabel.setText("Base height:")
-		
-		self.baseHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
-		self.baseHeightSpin.setMinimum(1.0)
-		self.baseHeightSpin.setMaximum(10.0)
-		self.baseHeightSpin.setValue(guides.baseHeight)
-		self.baseHeightSpin.setWrapping(True)
-		self.baseHeightSpin.setDecimals(1)
-		self.baseHeightSpin.setSingleStep(0.5)
-		
-		baseHeightLayout = QtGui.QHBoxLayout()
-		baseHeightLayout.addWidget(self.baseHeightLabel)
-		baseHeightLayout.addWidget(self.baseHeightSpin)
-		
-		self.capHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		self.capHeightLabel.setText("Capital height:")
-		
-		self.capHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
-		self.capHeightSpin.setMinimum(1)
-		self.capHeightSpin.setMaximum(10)
-		self.capHeightSpin.setValue(guides.capHeight)
-		self.capHeightSpin.setWrapping(True)
-		self.capHeightSpin.setDecimals(1)
-		self.capHeightSpin.setSingleStep(0.5)
-		
-		capHeightLayout = QtGui.QHBoxLayout()
-		capHeightLayout.addWidget(self.capHeightLabel)
-		capHeightLayout.addWidget(self.capHeightSpin)
-		
-		self.ascentHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		self.ascentHeightLabel.setText("Ascent height:")
-		
-		self.ascentHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
-		self.ascentHeightSpin.setMinimum(1)
-		self.ascentHeightSpin.setMaximum(10)
-		self.ascentHeightSpin.setValue(guides.ascentHeight)
-		self.ascentHeightSpin.setWrapping(True)
-		self.ascentHeightSpin.setDecimals(1)
-		self.ascentHeightSpin.setSingleStep(0.5)
-		
-		ascentHeightLayout = QtGui.QHBoxLayout()
-		ascentHeightLayout.addWidget(self.ascentHeightLabel)
-		ascentHeightLayout.addWidget(self.ascentHeightSpin)
-		
-		self.descentHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		self.descentHeightLabel.setText("Descent height:")
-		
-		self.descentHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
-		self.descentHeightSpin.setMinimum(1)
-		self.descentHeightSpin.setMaximum(10)
-		self.descentHeightSpin.setValue(guides.descentHeight)
-		self.descentHeightSpin.setWrapping(True)
-		self.descentHeightSpin.setDecimals(1)
-		self.descentHeightSpin.setSingleStep(0.5)
-		
-		descentHeightLayout = QtGui.QHBoxLayout()
-		descentHeightLayout.addWidget(self.descentHeightLabel)
-		descentHeightLayout.addWidget(self.descentHeightSpin)
-		
-		self.angleLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		self.angleLabel.setText("Guide angle:")
-		
-		self.angleSpin = QtGui.QSpinBox(self.guideLinePrefsDlg)
-		self.angleSpin.setMinimum(0)
-		self.angleSpin.setMaximum(45)
-		self.angleSpin.setValue(guides.angle)
-		self.angleSpin.setWrapping(True)
-		
-		angleLayout = QtGui.QHBoxLayout()
-		angleLayout.addWidget(self.angleLabel)
-		angleLayout.addWidget(self.angleSpin)
-		
-		self.gapHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
-		self.gapHeightLabel.setText("Gap distance:")
-		
-		self.gapHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
-		self.gapHeightSpin.setMinimum(1)
-		self.gapHeightSpin.setMaximum(10)
-		self.gapHeightSpin.setValue(guides.gapHeight)
-		self.gapHeightSpin.setWrapping(True)
-		self.gapHeightSpin.setDecimals(1)
-		self.gapHeightSpin.setSingleStep(0.5)
-		
-		gapHeightLayout = QtGui.QHBoxLayout()
-		gapHeightLayout.addWidget(self.gapHeightLabel)
-		gapHeightLayout.addWidget(self.gapHeightSpin)
-		
-		guidelinePrefsLayout.addLayout(mainLabelLayout)
-		guidelinePrefsLayout.addLayout(baseHeightLayout)
-		guidelinePrefsLayout.addLayout(ascentHeightLayout)
-		guidelinePrefsLayout.addLayout(capHeightLayout)
-		guidelinePrefsLayout.addLayout(descentHeightLayout)
-		guidelinePrefsLayout.addLayout(angleLayout)
-		guidelinePrefsLayout.addLayout(gapHeightLayout)
-		
-		guidelinePrefsMainLayout.addLayout(guidelinePrefsLayout)
-		guidelinePrefsMainLayout.addLayout(guidelinePrefsButtonLayout)
-		
-		self.guideLinePrefsDlg.setLayout(guidelinePrefsMainLayout)
-		self.guideLinePrefsDlg.setModal(True)
+		return
 		
 	def guideLinePrefsDlgAccept(self):
 		guides = self.dwgArea.getGuideLines()
@@ -521,8 +402,126 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		
 		self.nibPropFrame.setLayout(self.nibPropLayout)
 		#self.nibPropLayout.addWidget(self.nibPropertiesGroup)
-		self.propertyTabs.addTab(self.nibPropFrame, "Nib Properties")
+
+		self.pointPropFrame = QtGui.QFrame()
+		self.pointPropLayout = QtGui.QVBoxLayout(self.pointPropFrame)
+
+		self.guidePropFrame = QtGui.QFrame()
+		self.guidePropLayout = QtGui.QVBoxLayout(self.guidePropFrame)
+
+		guides = self.dwgArea.getGuideLines()
 		
+		mainLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		mainLabel.setText("Note: All units are nib-widths.")
+		mainLabelLayout = QtGui.QHBoxLayout()
+		mainLabelLayout.addWidget(mainLabel)
+		
+		self.baseHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.baseHeightLabel.setText("Base height:")
+		
+		self.baseHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.baseHeightSpin.setMinimum(1.0)
+		self.baseHeightSpin.setMaximum(10.0)
+		self.baseHeightSpin.setValue(guides.baseHeight)
+		self.baseHeightSpin.setWrapping(True)
+		self.baseHeightSpin.setDecimals(1)
+		self.baseHeightSpin.setSingleStep(0.5)
+		QtCore.QObject.connect(self.baseHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideBaseHeightChanged)
+		
+		baseHeightLayout = QtGui.QHBoxLayout()
+		baseHeightLayout.addWidget(self.baseHeightLabel)
+		baseHeightLayout.addWidget(self.baseHeightSpin)
+		
+		self.capHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.capHeightLabel.setText("Capital height:")
+		
+		self.capHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.capHeightSpin.setMinimum(0.5)
+		self.capHeightSpin.setMaximum(guides.ascentHeight)
+		self.capHeightSpin.setValue(guides.capHeight)
+		self.capHeightSpin.setWrapping(True)
+		self.capHeightSpin.setDecimals(1)
+		self.capHeightSpin.setSingleStep(0.5)
+		QtCore.QObject.connect(self.capHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideCapHeightChanged)
+		
+		capHeightLayout = QtGui.QHBoxLayout()
+		capHeightLayout.addWidget(self.capHeightLabel)
+		capHeightLayout.addWidget(self.capHeightSpin)
+		
+		self.ascentHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.ascentHeightLabel.setText("Ascent height:")
+		
+		self.ascentHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.ascentHeightSpin.setMinimum(1)
+		self.ascentHeightSpin.setMaximum(10)
+		self.ascentHeightSpin.setValue(guides.ascentHeight)
+		self.ascentHeightSpin.setWrapping(True)
+		self.ascentHeightSpin.setDecimals(1)
+		self.ascentHeightSpin.setSingleStep(0.5)
+		QtCore.QObject.connect(self.ascentHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideAscentChanged)
+		
+		ascentHeightLayout = QtGui.QHBoxLayout()
+		ascentHeightLayout.addWidget(self.ascentHeightLabel)
+		ascentHeightLayout.addWidget(self.ascentHeightSpin)
+		
+		self.descentHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.descentHeightLabel.setText("Descent height:")
+		
+		self.descentHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.descentHeightSpin.setMinimum(1)
+		self.descentHeightSpin.setMaximum(10)
+		self.descentHeightSpin.setValue(guides.descentHeight)
+		self.descentHeightSpin.setWrapping(True)
+		self.descentHeightSpin.setDecimals(1)
+		self.descentHeightSpin.setSingleStep(0.5)
+		QtCore.QObject.connect(self.descentHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideDescentChanged)
+		
+		descentHeightLayout = QtGui.QHBoxLayout()
+		descentHeightLayout.addWidget(self.descentHeightLabel)
+		descentHeightLayout.addWidget(self.descentHeightSpin)
+		
+		self.angleLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.angleLabel.setText("Guide angle:")
+		
+		self.angleSpin = QtGui.QSpinBox(self.guideLinePrefsDlg)
+		self.angleSpin.setMinimum(0)
+		self.angleSpin.setMaximum(45)
+		self.angleSpin.setValue(guides.angle)
+		self.angleSpin.setWrapping(True)
+		QtCore.QObject.connect(self.angleSpin, QtCore.SIGNAL("valueChanged(int)"), self.guideAngleChanged)
+		
+		angleLayout = QtGui.QHBoxLayout()
+		angleLayout.addWidget(self.angleLabel)
+		angleLayout.addWidget(self.angleSpin)
+		
+		self.gapHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.gapHeightLabel.setText("Gap distance:")
+		
+		self.gapHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.gapHeightSpin.setMinimum(1)
+		self.gapHeightSpin.setMaximum(10)
+		self.gapHeightSpin.setValue(guides.gapHeight)
+		self.gapHeightSpin.setWrapping(True)
+		self.gapHeightSpin.setDecimals(1)
+		self.gapHeightSpin.setSingleStep(0.5)
+		QtCore.QObject.connect(self.gapHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideGapHeightChanged)
+		
+		gapHeightLayout = QtGui.QHBoxLayout()
+		gapHeightLayout.addWidget(self.gapHeightLabel)
+		gapHeightLayout.addWidget(self.gapHeightSpin)
+		
+		self.guidePropLayout.addLayout(mainLabelLayout)
+		self.guidePropLayout.addLayout(baseHeightLayout)
+		self.guidePropLayout.addLayout(ascentHeightLayout)
+		self.guidePropLayout.addLayout(capHeightLayout)
+		self.guidePropLayout.addLayout(descentHeightLayout)
+		self.guidePropLayout.addLayout(angleLayout)
+		self.guidePropLayout.addLayout(gapHeightLayout)
+	
+		self.propertyTabs.addTab(self.nibPropFrame, "Nib")
+		self.propertyTabs.addTab(self.pointPropFrame, "Control Point")
+		self.propertyTabs.addTab(self.guidePropFrame, "Guidelines")
+
 		self.toolPaneLayout.addWidget(self.propertyTabs)
 		self.toolPaneLayout.addStretch()
 		
@@ -970,13 +969,13 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		command = {
 			'undo': self.changeNibSplitSize, 'undoArgs': {'value': prevValue},
 			'do': self.changeNibSplitSize, 'doArgs': {'value': newValue}
-			}
+		}
 
 		self.__undoStack.append(command)
 		self.__redoStack[:] = []
 
 		self.repaint()
-			
+
 	def changeNibAngle(self, args):
 		if (args.has_key('value')):
 			val = args['value']
@@ -1002,7 +1001,188 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			val = args['value']
 
 			self.nibSizeSpin.setValue(val)
-			
+
+	def guideBaseHeightChanged(self, event):
+		newValue = self.baseHeightSpin.value()
+
+		guides = self.dwgArea.getGuideLines()
+		
+		prevValue = guides.baseHeight
+
+		if (newValue == prevValue):
+			return
+
+		command = {
+			'undo': self.changeGuideBaseHeight, 'undoArgs': {'value': prevValue},
+			'do': self.changeGuideBaseHeight, 'doArgs': {'value': newValue}
+		}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		guides.baseHeight = newValue
+
+		self.dwgArea.repaint()
+
+	def changeGuideBaseHeight(self, args):
+		if (args.has_key('value')):
+			val = args['value']
+
+			guides = self.dwgArea.getGuideLines()
+			guides.baseHeight = val
+			self.baseHeightSpin.setValue(val)
+
+	def guideCapHeightChanged(self, event):
+		newValue = self.capHeightSpin.value()
+
+		guides = self.dwgArea.getGuideLines()
+		
+		prevValue = guides.capHeight
+
+		if (newValue == prevValue):
+			return
+
+		command = {
+			'undo': self.changeCapHeight, 'undoArgs': {'value': prevValue},
+			'do': self.changeCapHeight, 'doArgs': {'value': newValue}
+		}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		guides.capHeight = newValue
+
+		self.dwgArea.repaint()
+
+	def changeCapHeight(self, args):
+		if (args.has_key('value')):
+			val = args['value']
+
+			guides = self.dwgArea.getGuideLines()
+			guides.capHeight = val
+			self.capHeightSpin.setValue(val)
+
+	def guideAscentChanged(self, event):
+		newValue = self.ascentHeightSpin.value()
+
+		guides = self.dwgArea.getGuideLines()
+		
+		prevValue = guides.ascentHeight
+
+		if (newValue == prevValue):
+			return
+
+		command = {
+			'undo': self.changeAscentHeight, 'undoArgs': {'value': prevValue},
+			'do': self.changeAscentHeight, 'doArgs': {'value': newValue}
+		}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		guides.ascentHeight = newValue
+		self.capHeightSpin.setMaximum(newValue)
+		
+		self.dwgArea.repaint()
+
+	def changeAscentHeight(self, args):
+		if (args.has_key('value')):
+			val = args['value']
+
+			guides = self.dwgArea.getGuideLines()
+			guides.ascentHeight = val
+			self.ascentHeightSpin.setValue(val)
+
+	def guideDescentChanged(self, event):
+		newValue = self.descentHeightSpin.value()
+
+		guides = self.dwgArea.getGuideLines()
+		
+		prevValue = guides.descentHeight
+
+		if (newValue == prevValue):
+			return
+
+		command = {
+			'undo': self.changeDescentHeight, 'undoArgs': {'value': prevValue},
+			'do': self.changeDescentHeight, 'doArgs': {'value': newValue}
+		}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		guides.descentHeight = newValue
+
+		self.dwgArea.repaint()
+
+	def changeDescentHeight(self, args):
+		if (args.has_key('value')):
+			val = args['value']
+
+			guides = self.dwgArea.getGuideLines()
+			guides.descentHeight = val
+			self.descentHeightSpin.setValue(val)
+	
+	def guideAngleChanged(self, event):
+		newValue = self.angleSpin.value()
+
+		guides = self.dwgArea.getGuideLines()
+		
+		prevValue = guides.angle
+
+		if (newValue == prevValue):
+			return
+
+		command = {
+			'undo': self.changeGuideAngle, 'undoArgs': {'value': prevValue},
+			'do': self.changeGuideAngle, 'doArgs': {'value': newValue}
+		}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		guides.angle = newValue
+
+		self.dwgArea.repaint()
+
+	def changeGuideAngle(self, args):
+		if (args.has_key('value')):
+			val = args['value']
+
+			guides = self.dwgArea.getGuideLines()
+			guides.angle = val
+			self.angleSpin.setValue(val)
+
+	def guideGapHeightChanged(self, event):
+		newValue = self.gapHeightSpin.value()
+
+		guides = self.dwgArea.getGuideLines()
+		
+		prevValue = guides.gapHeight
+
+		if (newValue == prevValue):
+			return
+
+		command = {
+			'undo': self.changeGuideGapHeight, 'undoArgs': {'value': prevValue},
+			'do': self.changeGuideGapHeight, 'doArgs': {'value': newValue}
+		}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		guides.gapHeight = newValue
+
+		self.dwgArea.repaint()
+
+	def changeGuideGapHeight(self, args):
+		if (args.has_key('value')):
+			val = args['value']
+
+			guides = self.dwgArea.getGuideLines()
+			guides.gapHeight = val
+			self.gapHeightSpin.setValue(val)
+
 	def resizeEvent(self, evt):
 		
 		wid80 = int(self.width()*.75)
