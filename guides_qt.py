@@ -9,9 +9,9 @@ class guideLines(object):
 		# units are nibwidths from baseline
 		self.__baseHeight = 5
 		self.__width = 3
-		self.__ascentHeight = 8
+		self.__ascentHeight = 3
 		self.__descentHeight = 3
-		self.__capHeight = 7
+		self.__capHeight = 2
 		# nibwidths between rows
 		self.__gapHeight = 2
 		
@@ -65,18 +65,18 @@ class guideLines(object):
 	baseHeight = property(getBaseHeight, setBaseHeight)
 	
 	def setAscent(self, height):
-		self.__ascentHeight = height+self.__baseHeight
+		self.__ascentHeight = height #+self.__baseHeight
 		
 	def getAscent(self):
-		return self.__ascentHeight-self.__baseHeight
+		return self.__ascentHeight #-self.__baseHeight
 
 	ascentHeight = property(getAscent, setAscent)
 
 	def setCapHeight(self, height):
-		self.__capHeight = height+self.__baseHeight
+		self.__capHeight = height #+self.__baseHeight
 		
 	def getCapHeight(self):
-		return self.__capHeight-self.__baseHeight
+		return self.__capHeight #-self.__baseHeight
 
 	capHeight = property(getCapHeight, setCapHeight)
 	
@@ -112,9 +112,9 @@ class guideLines(object):
 		baseWidth = nibWidth * self.__width
 		halfBaseWidth = nibWidth * self.__width / 2
 		baseHeight = nibWidth * self.__baseHeight
-		ascentHeight = nibWidth * self.__ascentHeight
+		ascentHeight = nibWidth * (self.__ascentHeight + self.__baseHeight)
 		descentHeight = nibWidth * self.__descentHeight
-		capHeight = nibWidth * self.__capHeight
+		capHeight = nibWidth * (self.__capHeight + self.__baseHeight)
 		gapHeight = nibWidth * self.__gapHeight
 		
 		dx = self.__angleDX * (size.height() - self.__baselineY)
@@ -159,9 +159,9 @@ class guideLines(object):
 		baseWidth = nibWidth * self.__width
 		halfBaseWidth = nibWidth * self.__width / 2
 		baseHeight = nibWidth * self.__baseHeight
-		ascentHeight = nibWidth * self.__ascentHeight
+		ascentHeight = nibWidth * (self.__ascentHeight + self.__baseHeight)
 		descentHeight = nibWidth * self.__descentHeight
-		capHeight = nibWidth * self.__capHeight
+		capHeight = nibWidth * (self.__capHeight + self.__baseHeight)
 		gapHeight = nibWidth * self.__gapHeight
 		self.__baseX = (size.width() / 2)
 		self.__baselineY = (size.height() / 2)
