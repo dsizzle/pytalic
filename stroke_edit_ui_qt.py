@@ -622,21 +622,24 @@ class mainDrawingArea(QtGui.QWidget):
 		xpos = pt.x()
 		ypos = pt.y()
 		
-		if (self.__newStroke == 0):
-			self.__dragging = 1
-			self.__oldXPos = xpos
-			self.__oldYPos = ypos
-	
 		self.__draggingCtrlPt = None
 		self.__selectedPt = -1
 		self.__snappedNibPts = None
 		self.__snappedAxisPts = None
 		self.__snappedGridPts = None
 		
-		
 		insideStrokes = []
 		hit = 0
 		
+		if (self.__newStroke == 0):
+			self.__dragging = 1
+			self.__oldXPos = xpos
+			self.__oldYPos = ypos
+		else:
+			# if we're making a new stroke, don't check for 
+			# a hit on a stroke.
+			return
+
 		if self.__charData:
 			strokeList = self.__charData.strokes
 			
