@@ -633,8 +633,6 @@ class mainDrawingArea(QtGui.QWidget):
 		
 		if (self.__newStroke == 0):
 			self.__dragging = 1
-			self.__oldXPos = xpos
-			self.__oldYPos = ypos
 			self.__oldXpos = xpos
 			self.__oldYpos = ypos
 		else:
@@ -886,6 +884,7 @@ class mainDrawingArea(QtGui.QWidget):
 				if (tempStroke):
 					tempStroke.addEndSerif(5)
 					tempStroke.addStartSerif(10)
+					#tempStroke.addStartSerif(10)
 					self.__oldXpos = None
 					self.__oldYpos = None
 			
