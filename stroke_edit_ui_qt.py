@@ -635,6 +635,8 @@ class mainDrawingArea(QtGui.QWidget):
 			self.__dragging = 1
 			self.__oldXPos = xpos
 			self.__oldYPos = ypos
+			self.__oldXpos = xpos
+			self.__oldYpos = ypos
 		else:
 			# if we're making a new stroke, don't check for 
 			# a hit on a stroke.
