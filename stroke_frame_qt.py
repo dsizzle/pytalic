@@ -29,12 +29,9 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.fileSaveDlg = QtGui.QFileDialog() 
 		self.colorPickerDlg = QtGui.QColorDialog()
 		
-		self.guideLinePrefsDlg = QtGui.QDialog()
-		
 		self.__color__ = QtGui.QColor(125, 25, 25)
 		
 		self.createUI()
-		self.createGuidelinePrefsDlg()
 		
 		self.__fileName__ = None
 		self.__dirName__ = os.getcwd()
@@ -240,25 +237,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		helpAbout = QtGui.QAction("About", self)
 		helpAbout.triggered.connect(self.about_cb)
 		helpMenu.addAction(helpAbout)
-	
-	def createGuidelinePrefsDlg(self):
-		return
-		
-	def guideLinePrefsDlgAccept(self):
-		guides = self.dwgArea.getGuideLines()
-		
-		guides.baseHeight = self.baseHeightSpin.value()
-		guides.ascentHeight = self.ascentHeightSpin.value()
-		guides.descentHeight = self.descentHeightSpin.value()
-		guides.gapHeight = self.gapHeightSpin.value()
-		guides.capHeight = self.capHeightSpin.value()
-		guides.angle = self.angleSpin.value()
-		
-		self.guideLinePrefsDlg.hide()
-		self.dwgArea.repaint()
-		
-	def guideLinePrefsDlgCancel(self):
-		self.guideLinePrefsDlg.hide()
 			
 	def createUI(self):
 		
@@ -411,15 +389,15 @@ class stroke_frame_qt(QtGui.QMainWindow):
 
 		guides = self.dwgArea.getGuideLines()
 		
-		mainLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		mainLabel = QtGui.QLabel(self.guidePropFrame)
 		mainLabel.setText("Note: All units are nib-widths.")
 		mainLabelLayout = QtGui.QHBoxLayout()
 		mainLabelLayout.addWidget(mainLabel)
 		
-		self.baseHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.baseHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.baseHeightLabel.setText("Base height:")
 		
-		self.baseHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.baseHeightSpin = QtGui.QDoubleSpinBox(self.guidePropFrame)
 		self.baseHeightSpin.setMinimum(1.0)
 		self.baseHeightSpin.setMaximum(10.0)
 		self.baseHeightSpin.setValue(guides.baseHeight)
@@ -432,10 +410,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		baseHeightLayout.addWidget(self.baseHeightLabel)
 		baseHeightLayout.addWidget(self.baseHeightSpin)
 		
-		self.capHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.capHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.capHeightLabel.setText("Capital height:")
 		
-		self.capHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.capHeightSpin = QtGui.QDoubleSpinBox(self.guidePropFrame)
 		self.capHeightSpin.setMinimum(0.5)
 		self.capHeightSpin.setMaximum(guides.ascentHeight)
 		self.capHeightSpin.setValue(guides.capHeight)
@@ -448,10 +426,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		capHeightLayout.addWidget(self.capHeightLabel)
 		capHeightLayout.addWidget(self.capHeightSpin)
 		
-		self.ascentHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.ascentHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.ascentHeightLabel.setText("Ascent height:")
 		
-		self.ascentHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.ascentHeightSpin = QtGui.QDoubleSpinBox(self.guidePropFrame)
 		self.ascentHeightSpin.setMinimum(1)
 		self.ascentHeightSpin.setMaximum(10)
 		self.ascentHeightSpin.setValue(guides.ascentHeight)
@@ -464,10 +442,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		ascentHeightLayout.addWidget(self.ascentHeightLabel)
 		ascentHeightLayout.addWidget(self.ascentHeightSpin)
 		
-		self.descentHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.descentHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.descentHeightLabel.setText("Descent height:")
 		
-		self.descentHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.descentHeightSpin = QtGui.QDoubleSpinBox(self.guidePropFrame)
 		self.descentHeightSpin.setMinimum(1)
 		self.descentHeightSpin.setMaximum(10)
 		self.descentHeightSpin.setValue(guides.descentHeight)
@@ -480,10 +458,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		descentHeightLayout.addWidget(self.descentHeightLabel)
 		descentHeightLayout.addWidget(self.descentHeightSpin)
 		
-		self.angleLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.angleLabel = QtGui.QLabel(self.guidePropFrame)
 		self.angleLabel.setText("Guide angle:")
 		
-		self.angleSpin = QtGui.QSpinBox(self.guideLinePrefsDlg)
+		self.angleSpin = QtGui.QSpinBox(self.guidePropFrame)
 		self.angleSpin.setMinimum(0)
 		self.angleSpin.setMaximum(45)
 		self.angleSpin.setValue(guides.angle)
@@ -494,10 +472,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		angleLayout.addWidget(self.angleLabel)
 		angleLayout.addWidget(self.angleSpin)
 		
-		self.gapHeightLabel = QtGui.QLabel(self.guideLinePrefsDlg)
+		self.gapHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.gapHeightLabel.setText("Gap distance:")
 		
-		self.gapHeightSpin = QtGui.QDoubleSpinBox(self.guideLinePrefsDlg)
+		self.gapHeightSpin = QtGui.QDoubleSpinBox(self.guidePropFrame)
 		self.gapHeightSpin.setMinimum(1)
 		self.gapHeightSpin.setMaximum(10)
 		self.gapHeightSpin.setValue(guides.gapHeight)
@@ -573,10 +551,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		
 		self.repaint()
 		self.dwgArea.repaint()
-		
-	def guidelinePrefs_cb(self, event):
-		self.dwgArea.repaint()
-		self.guideLinePrefsDlg.show()
 		
 	def alignTangents_cb(self, event):
 		self.dwgArea.alignTangents()
