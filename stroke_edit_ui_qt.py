@@ -882,8 +882,7 @@ class mainDrawingArea(QtGui.QWidget):
 				self.__newFreehandStroke = 0
 		
 				if (tempStroke):
-					tempStroke.addEndSerif(5)
-					tempStroke.addStartSerif(10)
+					#tempStroke.addEndSerif(5)
 					#tempStroke.addStartSerif(10)
 					self.__oldXpos = None
 					self.__oldYpos = None
