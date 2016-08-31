@@ -867,20 +867,23 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			width = self.nibSizeSpin.value()
 			angle = self.nibAngleSpin.value()
 			split = self.nibSplitSizeSpin.value()
-			
+			# this is so wasteful...create them in the beginning and just use 'em
+			# make them singletons?
+			del self.__mainNib__ 
+
 			if (self.nibIdx == 0):
 				self.nibSplitSizeLabel.setEnabled(False)
 				self.nibSplitSizeSpin.setEnabled(False)
-				self.__mainNib__ = nibs_qt.Nib(width, angle)
+				self.__mainNib__ = nibs_qt.Nib(width, angle, color=self.__color__)
 			elif (self.nibIdx == 1):
 				self.nibSplitSizeLabel.setEnabled(True)
 				self.nibSplitSizeSpin.setEnabled(True)
-				self.__mainNib__ = nibs_qt.ScrollNib(width, angle, split)
+				self.__mainNib__ = nibs_qt.ScrollNib(width, angle, split, color=self.__color__)
 				
 			elif (self.nibIdx == 2):
 				self.nibSplitSizeLabel.setEnabled(False)
 				self.nibSplitSizeSpin.setEnabled(False)
-				self.__mainNib__ = nibs_qt.BrushNib(width, angle)
+				self.__mainNib__ = nibs_qt.BrushNib(width, angle, color=self.__color__)
 			
 			self.dwgArea.setNib(self.__mainNib__)	
 
