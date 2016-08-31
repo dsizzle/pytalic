@@ -1,3 +1,4 @@
+from datetime import *
 
 import math
 
@@ -59,6 +60,9 @@ class mainDrawingArea(QtGui.QWidget):
 		
 		self.__undoStack = None
 		self.__redoStack = None
+
+		self.__last_time = None
+		self.__now_time = None
 		
 	def setUndoStack(self, undoStack):
 		self.__undoStack = undoStack
@@ -280,14 +284,19 @@ class mainDrawingArea(QtGui.QWidget):
 				xpos = pt.x()
 				ypos = pt.y()
 
-				self.__newStrokePts.append([xpos, ypos])
+				self.__now_time = datetime.now()
+				if self.__last_time is None or self.__now_time - self.__last_time > timedelta(milliseconds=20):
+					self.__newStrokePts.append([xpos, ypos])
+					self.__last_time = self.__now_time
+					self.repaint()
 
 				self.__oldXpos = xpos
 				self.__oldYpos = ypos
-			
+			else:
+				self.repaint()
+
 			self.__mouseX = pt.x()
 			self.__mouseY = pt.y()
-			self.repaint()
 			
 		else:
 			self.__mouseX = -1
