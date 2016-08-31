@@ -998,7 +998,13 @@ class mainDrawingArea(QtGui.QWidget):
 			dc.setBrush(self.__clearBrush)
 			if (self.__newFreehandStroke > 0):
 				ptRadius = 5
+			elif len(self.__newStrokePts) > 1:
+				tmpStrokePts = self.__newStrokePts[:]
+				tmpStroke = self.__charData.newStroke(tmpStrokePts, False)
 				
+				tmpStroke.draw(dc, 0, self.__nib)
+
+
 			prevPt = None
 			for pt in self.__newStrokePts:		
 				dc.drawEllipse(QtCore.QPoint(pt[0], pt[1]), ptRadius, ptRadius)

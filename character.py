@@ -13,7 +13,7 @@ class Character(object):
 		self.__nib = None
 		self.__bitmapPreview = None
 		
-	def newStroke(self, pts):
+	def newStroke(self, pts, add=True):
 		myStroke = stroke_qt.Stroke()
 		
 		tempCv = []
@@ -76,7 +76,8 @@ class Character(object):
 		if (2 == numPts):
 			myStroke.straighten()
 	
-		self.__strokes.append(myStroke)
+		if add:
+			self.__strokes.append(myStroke)
 
 		return myStroke
 		
