@@ -293,11 +293,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.toolPane.resize(wid20, hgt-toolBarHgt)
 		self.toolPane.move(self.toolPane.x(), self.toolPane.y()+toolBarHgt)
 		self.toolPaneLayout = QtGui.QVBoxLayout(self.toolPane)
-
-		self.propertyTabs = QtGui.QTabWidget(self.toolPane)
 		
+		self.propertyTabs = QtGui.QTabWidget(self.toolPane)
 		self.nibPropFrame = QtGui.QFrame()
-		self.nibPropLayout = QtGui.QVBoxLayout(self.nibPropFrame)
+		self.nibPropLayout = QtGui.QFormLayout(self.nibPropFrame)
 		
 		nibTypeList = ["Flat", "Scroll", "Brush"]
 		
@@ -349,50 +348,37 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.nibSplitSizeSpin.setEnabled(False)
 		QtCore.QObject.connect(self.nibSplitSizeSpin, QtCore.SIGNAL("valueChanged(int)"), self.nibSplitSizeChanged)
 		
-		self.nibPropertiesGroup = QtGui.QGroupBox("Nib Properties")
-		self.nibPropertiesGroupLayout = QtGui.QVBoxLayout(self.nibPropertiesGroup)
-		
-		self.nibTypeLayout = QtGui.QHBoxLayout()
-		self.nibTypeLayout.addWidget(self.nibTypeLabel)
-		self.nibTypeLayout.addWidget(self.nibTypeSelector)
-		
-		self.nibAngleLayout = QtGui.QHBoxLayout()
-		self.nibAngleLayout.addWidget(self.nibAngleLabel)
-		self.nibAngleLayout.addWidget(self.nibAngleSpin)
-		
-		self.nibSizeLayout = QtGui.QHBoxLayout()
-		self.nibSizeLayout.addWidget(self.nibSizeLabel)
-		self.nibSizeLayout.addWidget(self.nibSizeSpin)
-		
-		self.nibSplitSizeLayout = QtGui.QHBoxLayout()
-		self.nibSplitSizeLayout.addWidget(self.nibSplitSizeLabel)
-		self.nibSplitSizeLayout.addWidget(self.nibSplitSizeSpin)
-		
-		self.nibColorLayout = QtGui.QHBoxLayout()
-		self.nibColorLayout.addWidget(self.nibColorLabel)
-		self.nibColorLayout.addWidget(self.nibColorButton)
-		
-		self.nibPropLayout.addLayout(self.nibTypeLayout)
-		self.nibPropLayout.addLayout(self.nibAngleLayout)
-		self.nibPropLayout.addLayout(self.nibSizeLayout)
-		self.nibPropLayout.addLayout(self.nibSplitSizeLayout)
-		self.nibPropLayout.addLayout(self.nibColorLayout)
+		self.nibPropLayout.addRow(self.nibTypeLabel, self.nibTypeSelector)
+		self.nibPropLayout.addRow(self.nibAngleLabel, self.nibAngleSpin)
+		self.nibPropLayout.addRow(self.nibSizeLabel, self.nibSizeSpin)
+		self.nibPropLayout.addRow(self.nibSplitSizeLabel, self.nibSplitSizeSpin)
+		self.nibPropLayout.addRow(self.nibColorLabel, self.nibColorButton)
 		
 		self.nibPropFrame.setLayout(self.nibPropLayout)
-		#self.nibPropLayout.addWidget(self.nibPropertiesGroup)
-
+		
 		self.pointPropFrame = QtGui.QFrame()
-		self.pointPropLayout = QtGui.QVBoxLayout(self.pointPropFrame)
+		self.pointPropLayout = QtGui.QFormLayout(self.pointPropFrame)
+
+		pointBehaviorList = ["Smooth", "Sharp", "Symmetric"]
+		
+		self.pointBehaviorLabel = QtGui.QLabel(self.pointPropFrame)
+		self.pointBehaviorLabel.setText("Behavior:")
+		
+		self.pointBehaviorSelector = QtGui.QComboBox(self.pointPropFrame)
+		self.pointBehaviorSelector.addItems(QtCore.QStringList(pointBehaviorList))
+		#self.pointBehaviorSelector.currentIndexChanged.connect(self.pointBehaviorSelected)
+		self.pointPropLayout.addRow(self.pointBehaviorLabel, self.pointBehaviorSelector)
+
+		self.pointPropFrame.setLayout(self.pointPropLayout)
 
 		self.guidePropFrame = QtGui.QFrame()
-		self.guidePropLayout = QtGui.QVBoxLayout(self.guidePropFrame)
+		self.guidePropLayout = QtGui.QFormLayout(self.guidePropFrame)
 
 		guides = self.dwgArea.getGuideLines()
 		
 		mainLabel = QtGui.QLabel(self.guidePropFrame)
 		mainLabel.setText("Note: All units are nib-widths.")
-		mainLabelLayout = QtGui.QHBoxLayout()
-		mainLabelLayout.addWidget(mainLabel)
+		self.guidePropLayout.addRow(mainLabel)
 		
 		self.baseHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.baseHeightLabel.setText("Base height:")
@@ -406,10 +392,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.baseHeightSpin.setSingleStep(0.5)
 		QtCore.QObject.connect(self.baseHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideBaseHeightChanged)
 		
-		baseHeightLayout = QtGui.QHBoxLayout()
-		baseHeightLayout.addWidget(self.baseHeightLabel)
-		baseHeightLayout.addWidget(self.baseHeightSpin)
-		
 		self.capHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.capHeightLabel.setText("Capital height:")
 		
@@ -421,10 +403,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.capHeightSpin.setDecimals(1)
 		self.capHeightSpin.setSingleStep(0.5)
 		QtCore.QObject.connect(self.capHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideCapHeightChanged)
-		
-		capHeightLayout = QtGui.QHBoxLayout()
-		capHeightLayout.addWidget(self.capHeightLabel)
-		capHeightLayout.addWidget(self.capHeightSpin)
 		
 		self.ascentHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.ascentHeightLabel.setText("Ascent height:")
@@ -438,10 +416,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.ascentHeightSpin.setSingleStep(0.5)
 		QtCore.QObject.connect(self.ascentHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideAscentChanged)
 		
-		ascentHeightLayout = QtGui.QHBoxLayout()
-		ascentHeightLayout.addWidget(self.ascentHeightLabel)
-		ascentHeightLayout.addWidget(self.ascentHeightSpin)
-		
 		self.descentHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.descentHeightLabel.setText("Descent height:")
 		
@@ -453,11 +427,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.descentHeightSpin.setDecimals(1)
 		self.descentHeightSpin.setSingleStep(0.5)
 		QtCore.QObject.connect(self.descentHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideDescentChanged)
-		
-		descentHeightLayout = QtGui.QHBoxLayout()
-		descentHeightLayout.addWidget(self.descentHeightLabel)
-		descentHeightLayout.addWidget(self.descentHeightSpin)
-		
+				
 		self.angleLabel = QtGui.QLabel(self.guidePropFrame)
 		self.angleLabel.setText("Guide angle:")
 		
@@ -467,10 +437,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.angleSpin.setValue(guides.angle)
 		self.angleSpin.setWrapping(True)
 		QtCore.QObject.connect(self.angleSpin, QtCore.SIGNAL("valueChanged(int)"), self.guideAngleChanged)
-		
-		angleLayout = QtGui.QHBoxLayout()
-		angleLayout.addWidget(self.angleLabel)
-		angleLayout.addWidget(self.angleSpin)
 		
 		self.gapHeightLabel = QtGui.QLabel(self.guidePropFrame)
 		self.gapHeightLabel.setText("Gap distance:")
@@ -484,24 +450,21 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.gapHeightSpin.setSingleStep(0.5)
 		QtCore.QObject.connect(self.gapHeightSpin, QtCore.SIGNAL("valueChanged(double)"), self.guideGapHeightChanged)
 		
-		gapHeightLayout = QtGui.QHBoxLayout()
-		gapHeightLayout.addWidget(self.gapHeightLabel)
-		gapHeightLayout.addWidget(self.gapHeightSpin)
-		
-		self.guidePropLayout.addLayout(mainLabelLayout)
-		self.guidePropLayout.addLayout(baseHeightLayout)
-		self.guidePropLayout.addLayout(ascentHeightLayout)
-		self.guidePropLayout.addLayout(capHeightLayout)
-		self.guidePropLayout.addLayout(descentHeightLayout)
-		self.guidePropLayout.addLayout(angleLayout)
-		self.guidePropLayout.addLayout(gapHeightLayout)
+		self.guidePropLayout.addRow(self.baseHeightLabel, self.baseHeightSpin)
+		self.guidePropLayout.addRow(self.capHeightLabel, self.capHeightSpin)
+		self.guidePropLayout.addRow(self.ascentHeightLabel, self.ascentHeightSpin)
+		self.guidePropLayout.addRow(self.descentHeightLabel, self.descentHeightSpin)
+		self.guidePropLayout.addRow(self.angleLabel, self.angleSpin)
+		self.guidePropLayout.addRow(self.gapHeightLabel, self.gapHeightSpin)
 	
+		self.guidePropFrame.setLayout(self.guidePropLayout)
+
 		self.propertyTabs.addTab(self.nibPropFrame, "Nib")
 		self.propertyTabs.addTab(self.pointPropFrame, "Control Point")
 		self.propertyTabs.addTab(self.guidePropFrame, "Guidelines")
 
 		self.toolPaneLayout.addWidget(self.propertyTabs)
-		self.toolPaneLayout.addStretch()
+		#self.toolPaneLayout.addStretch()
 		
 		self.toolPane.setLayout(self.toolPaneLayout)
 		self.toolPane.setMaximumWidth(self.toolPane.width())
@@ -514,7 +477,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		
 		self.uberMainLayout.addLayout(self.charSelectorLayout)
 		self.uberMainLayout.addLayout(self.mainLayout)
-	
+		
 	def about_cb(self, event):
 		reply = QtGui.QMessageBox.information(self, 'About', "This is a program", \
 			QtGui.QMessageBox.Ok )
