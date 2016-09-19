@@ -105,6 +105,15 @@ class mainDrawingArea(QtGui.QWidget):
 	def getSelectedStrokes(self):
 		return self.__selection
 	
+	def getSelectedCtrlPoint(self):
+		if self.__selectedPt == None or self.__selectedPt < 0:
+			return None
+		else:
+			selStroke = self.__selection[0]
+			selPt = selStroke.getCtrlVertices()[self.__selectedPt]
+			
+			return selPt
+
 	def setSelectedStrokes(self, strokes):
 		self.__selection = strokes
 		self.__selectedPt = None
