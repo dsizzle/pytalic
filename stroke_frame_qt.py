@@ -245,9 +245,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			
 		wid80 = int(self.width()*.75)
 		wid20 = self.width() - wid80
-		hgt = self.height() # - menuHeight
-
-	 	toolBarHgt = self.toolBar.height()
+		hgt = self.height() 
 		
 		charList = []
 		for i in range(32, 128):
@@ -256,7 +254,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.uberMainLayout = QtGui.QVBoxLayout() #self.uberMainFrame)
 		
 		self.charSelectorLayout = QtGui.QHBoxLayout() #self.charSelectorPane)
-	
+		self.charSelectorLayout.setMargin(0)
+		self.charSelectorLayout.setSpacing(0)
+		self.charSelectorLayout.setContentsMargins(0, 0, 0, 0)
+
 		self.charSelectorList = QtGui.QListWidget(self)
 		self.charSelectorList.setFlow(QtGui.QListView.LeftToRight)
 		self.charSelectorList.resize(self.width(), gICON_SIZE*2)
@@ -264,34 +265,34 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.charSelectorList.addItems(QtCore.QStringList(charList))
 		self.charSelectorList.setIconSize(QtCore.QSize(gICON_SIZE, gICON_SIZE))
 		self.charSelectorList.currentItemChanged.connect(self.charSelected)
-		self.charSelectorList.move(self.charSelectorList.x(), self.charSelectorList.y()+toolBarHgt)
+		self.charSelectorList.setAutoFillBackground(True)
+		p = self.charSelectorList.palette()
+		p.setColor(self.charSelectorList.backgroundRole(), QtCore.Qt.red)
+		self.charSelectorList.setPalette(p)
+
 		blankPixmap = QtGui.QPixmap(gICON_SIZE, gICON_SIZE)
 		blankPixmap.fill(QtGui.QColor(240, 240, 230))
 		for idx in range(0, self.charSelectorList.count()):
 			curItem = self.charSelectorList.item(idx)
 			curItem.setIcon(QtGui.QIcon(blankPixmap))
 			
-		self.charSelectorLayout.addWidget(self.charSelectorList)
+		self.charSelectorLayout.addWidget(self.charSelectorList, 0, QtCore.Qt.AlignTop)
 		charSelectHgt = self.charSelectorList.height()
 			
 		self.mainLayout = QtGui.QVBoxLayout() #self.uberMainFrame)
 		
 		self.mainSplitter = MySplitter (self)
-		self.mainSplitter.resize(self.width(), hgt-toolBarHgt-charSelectHgt-5)
-		self.mainSplitter.move(self.mainSplitter.x(), self.mainSplitter.y()+toolBarHgt+charSelectHgt+2)
 		
 		self.dwgWindow = QtGui.QFrame()
 		
-		self.dwgArea = stroke_edit_ui_qt.mainDrawingArea(self.dwgWindow,QtCore.QPoint(2, 2), QtCore.QSize(wid80-4, hgt-4-toolBarHgt))
+		self.dwgArea = stroke_edit_ui_qt.mainDrawingArea(self.dwgWindow,QtCore.QPoint(2, 2), QtCore.QSize(wid80-4, hgt-4)) #-toolBarHgt))
 		
 		self.dwgWindow.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken); #6);  # Sunken
 		self.dwgWindow.setLineWidth(2)
-		self.dwgWindow.resize(wid80, hgt-toolBarHgt)
-		self.dwgWindow.move(self.dwgWindow.x(), self.dwgWindow.y()+toolBarHgt)
+		self.dwgWindow.resize(wid80, hgt)
 		
 		self.toolPane = QtGui.QFrame()
-		self.toolPane.resize(wid20, hgt-toolBarHgt)
-		self.toolPane.move(self.toolPane.x(), self.toolPane.y()+toolBarHgt)
+		self.toolPane.resize(wid20, hgt)
 		self.toolPaneLayout = QtGui.QVBoxLayout(self.toolPane)
 		
 		self.propertyTabs = QtGui.QTabWidget(self.toolPane)
@@ -463,8 +464,9 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.propertyTabs.addTab(self.pointPropFrame, "Control Point")
 		self.propertyTabs.addTab(self.guidePropFrame, "Guidelines")
 
+		self.toolPaneLayout.setMargin(0)
+		self.toolPaneLayout.setSpacing(0)
 		self.toolPaneLayout.addWidget(self.propertyTabs)
-		#self.toolPaneLayout.addStretch()
 		
 		self.toolPane.setLayout(self.toolPaneLayout)
 		self.toolPane.setMaximumWidth(self.toolPane.width())
@@ -472,12 +474,24 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.mainSplitter.addWidget(self.dwgWindow)
 		self.mainSplitter.addWidget(self.toolPane)
 		self.mainSplitter.setMaxPaneWidth(self.toolPane.width())
-		
+
 		self.mainLayout.addWidget(self.mainSplitter)
+		self.mainLayout.setMargin(0)
+		self.mainLayout.setSpacing(0)
+		self.mainLayout.setContentsMargins(0, 0, 0, 0)
+		mainSizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+		self.mainSplitter.setSizePolicy(mainSizePolicy)
 		
+		self.dwgWindow.setSizePolicy(mainSizePolicy)
+
 		self.uberMainLayout.addLayout(self.charSelectorLayout)
-		self.uberMainLayout.addLayout(self.mainLayout)
-		
+		self.uberMainLayout.addLayout(self.mainLayout, 2)
+
+		self.mainWidget = QtGui.QWidget()
+		self.mainWidget.setLayout(self.uberMainLayout)
+
+		self.setCentralWidget(self.mainWidget)
+
 	def about_cb(self, event):
 		reply = QtGui.QMessageBox.information(self, 'About', "This is a program", \
 			QtGui.QMessageBox.Ok )
@@ -1124,16 +1138,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			self.gapHeightSpin.setValue(val)
 
 	def resizeEvent(self, evt):
-		
-		wid80 = int(self.width()*.75)
-		wid20 = self.width() - wid80
-		hgt = self.height() # - menuHeight
-		toolBarHgt = self.toolBar.height()
-		charSelectHgt = self.charSelectorList.height()
-		self.charSelectorList.resize(self.width(), charSelectHgt)
-		self.mainSplitter.resize(self.width(), hgt-toolBarHgt-charSelectHgt)
-		self.toolBar.resize(self.width(), toolBarHgt)
-		self.dwgArea.resize(self.mainSplitter.width()-self.toolPane.width(), hgt-4-toolBarHgt)
+		self.dwgArea.resize(self.width(), self.height())
 		self.repaint()
 			
 	
@@ -1164,11 +1169,7 @@ class MySplitter(QtGui.QSplitter):
 		self.repaint()
 		
 	def splitterMoved(self, pos, handle):
-		hgt = self.parent.height()
-		toolBarHgt = self.parent.toolBar.height()
-		charSelectHgt = self.parent.charSelectorList.height()
-		
-		self.parent.dwgArea.resize(self.parent.mainSplitter.width()-self.parent.toolPane.width(), hgt-4-toolBarHgt-charSelectHgt)
+		self.parent.dwgArea.resize(self.parent.width(), self.parent.height())
 		self.repaint()
 	
 	def setMaxPaneWidth(self, width):
