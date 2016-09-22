@@ -4,6 +4,7 @@
 #
 #
 
+import copy
 import math
 import time
 import random
@@ -105,9 +106,20 @@ class Stroke(shapes.splines.BezierSpline):
 	def calcCtrlVertices(self, pts):
 		return shapes.splines.BezierSpline.calcCtrlVertices(self, pts)
 	
-	def getCtrlVertices(self):
-		return self.__strokeCtrlVerts[:]
-		
+	def getCtrlVertices(self, make_copy=True):
+		if make_copy:
+			verts = copy.deepcopy(self.__strokeCtrlVerts)
+		else:
+			verts = self.__strokeCtrlVerts
+
+		return verts
+
+	def getCtrlVertex(self, idx):
+		if len(self.__strokeCtrlVerts) > idx:
+			return self.__strokeCtrlVerts[idx]
+
+		return None
+
 	def getCtrlVerticesAsList(self):
 		pts = []
 		for vert in self.__strokeCtrlVerts:

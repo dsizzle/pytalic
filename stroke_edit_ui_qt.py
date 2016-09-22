@@ -110,7 +110,7 @@ class mainDrawingArea(QtGui.QWidget):
 			return None
 		else:
 			selStroke = self.__selection[0]
-			selPt = selStroke.getCtrlVertices()[self.__selectedPt]
+			selPt = selStroke.getCtrlVertex(self.__selectedPt)
 			
 			return selPt
 
@@ -307,6 +307,7 @@ class mainDrawingArea(QtGui.QWidget):
 			self.__mouseX = pt.x()
 			self.__mouseY = pt.y()
 			
+			
 		else:
 			self.__mouseX = -1
 			self.__mouseY = -1
@@ -363,7 +364,7 @@ class mainDrawingArea(QtGui.QWidget):
 				
 				if (self.__selectedPt >= 0):
 					offset = self.__selection[0].getPos()
-					ctrlPts = self.__selection[0].getCtrlVertices()
+					ctrlPts = self.__selection[0].getCtrlVertices(False)
 					
 					vpos = ctrlPts[self.__selectedPt].getPosOfSelected()
 					dx = xpos - (vpos[0]+offset[0])
@@ -403,7 +404,7 @@ class mainDrawingArea(QtGui.QWidget):
 		
 		if (self.__selectedPt >= 0):
 			offset = self.__selection[0].getPos()
-			ctrlPts = self.__selection[0].getCtrlVertices()
+			ctrlPts = self.__selection[0].getCtrlVertices(False)
 			
 			if (self.__selectedPt == 0) and (ctrlPts[self.__selectedPt].isKnotSelected()):
 				vpos = ctrlPts[self.__selectedPt+1].getPos()
@@ -449,7 +450,7 @@ class mainDrawingArea(QtGui.QWidget):
 		
 		if (self.__selectedPt >= 0):
 			offset = self.__selection[0].getPos()
-			ctrlPts = self.__selection[0].getCtrlVertices()
+			ctrlPts = self.__selection[0].getCtrlVertices(False)
 			
 			if (self.__selectedPt == 0) and (ctrlPts[self.__selectedPt].isKnotSelected()):
 				vpos = ctrlPts[self.__selectedPt+1].getPos()
@@ -540,7 +541,7 @@ class mainDrawingArea(QtGui.QWidget):
 			return
 		else:
 			selStroke = self.__selection[0]
-			selPt = selStroke.getCtrlVertices()[self.__selectedPt]
+			selPt = selStroke.getCtrlVertex(self.__selectedPt)
 			
 			undoArgs = {}
 			undoArgs['stroke'] = selStroke
@@ -570,7 +571,7 @@ class mainDrawingArea(QtGui.QWidget):
 			return
 		else:
 			selStroke = self.__selection[0]
-			selPt = selStroke.getCtrlVertices()[self.__selectedPt]
+			selPt = selStroke.getCtrlVertex(self.__selectedPt)
 			
 			undoArgs = {}
 			undoArgs['stroke'] = selStroke
@@ -600,7 +601,7 @@ class mainDrawingArea(QtGui.QWidget):
 			return
 		else:
 			selStroke = self.__selection[0]
-			selPt = selStroke.getCtrlVertices()[self.__selectedPt]
+			selPt = selStroke.getCtrlVertex(self.__selectedPt)
 			
 			undoArgs = {}
 			undoArgs['stroke'] = selStroke
@@ -663,7 +664,7 @@ class mainDrawingArea(QtGui.QWidget):
 			
 			self.__selectedPt = None
 			for stroke in self.__selection:
-				ctrlPts = stroke.getCtrlVertices()
+				ctrlPts = stroke.getCtrlVertices(False)
 				numPts = len(ctrlPts)
 				offset = stroke.getPos()
 				for i in range(0, numPts):
@@ -697,7 +698,7 @@ class mainDrawingArea(QtGui.QWidget):
 				## while trying to click one of its points?
 				self.__selectedPt = None
 				for stroke in self.__selection:
-					ctrlPts = stroke.getCtrlVertices()
+					ctrlPts = stroke.getCtrlVertices(False)
 					numPts = len(ctrlPts)
 					offset = stroke.getPos()
 					for i in range(0, numPts):
@@ -790,7 +791,7 @@ class mainDrawingArea(QtGui.QWidget):
 				doArgs = {}
 				doArgs['strokes'] = [stroke]
 				doArgs['points'] = [self.__selectedPt]
-				doArgs['handle'] = ctrlPts[self.__selectedPt].getSelectedHandle()
+				doArgs['handle'] = stroke.getCtrlVertex(self.__selectedPt).getSelectedHandle()
 				doArgs['delta'] = [xpos - self.__beforeMoveXpos, ypos - self.__beforeMoveYpos]
 				undoArgs = {}
 				undoArgs['strokes'] = [stroke]
@@ -843,7 +844,7 @@ class mainDrawingArea(QtGui.QWidget):
 					dy = strokeDelta[1]
 				
 					for stroke in strokeList:
-						ctrlPts = stroke.getCtrlVertices()
+						ctrlPts = stroke.getCtrlVertices(False)
 						
 						for pt in selPts:
 							ctrlVert = ctrlPts[pt]
@@ -1000,7 +1001,6 @@ class mainDrawingArea(QtGui.QWidget):
 					stroke.draw(dc, 1, self.__nib, self.__selectedPt)
 				else:
 					stroke.draw(dc, 0, self.__nib)
-					
 				
 		if (self.__newStroke > 0):
 			dc.setPen(self.__grayPen)
