@@ -18,22 +18,30 @@ import serif
 from PyQt4 import QtCore, QtGui
 
 class Stroke(shapes.splines.BezierSpline):
-	def __init__(self, dimension=2):
+	def __init__(self, dimension=2, fromStroke=None):
 		shapes.splines.BezierSpline.__init__(self, dimension)
 		#splines.CatmullRomSpline.__init__(self, 2.0)
-		self.nib = None
+		if fromStroke is not None:
+			self.nib = fromStroke.getNib()
+			self.__startSerif = fromStroke.getStartSerif()
+			self.__endSerif = fromStroke.getEndSerif()
+			self.__strokeCtrlVerts = fromStroke.getCtrlVertices()
+			self.updateCtrlVertices()
+			(self.__x, self.__y) = fromStroke.getPos()
+		else:	
+			self.nib = None	
+			self.__startSerif = None
+			self.__endSerif = None
+			self.__strokeCtrlVerts = []
+			self.__x = 0
+			self.__y = 0
 		
-		self.__startSerif = None
-		self.__endSerif = None
-		self.__startFlourish = None
-		self.__endFlourish = None
-		self.__x = 0
-		self.__y = 0
-		self.__handleSize = 10
 		self.__boundBoxes = []
 		self.__mainBoundBox = None
-		self.__strokeCtrlVerts = []
-		
+		self.__startFlourish = None
+		self.__endFlourish = None
+		self.__handleSize = 10
+		self.__bitmapPreview = None
 		self.seed = time.localtime()
 		
 	def setPos(self, x, y):
@@ -80,7 +88,10 @@ class Stroke(shapes.splines.BezierSpline):
 		
 	def removeEndSerif(self):
 		self.__endSerif = None
-		
+	
+	def getEndSerif(self):
+		return self.__endSerif
+
 	def addStartSerif(self, distance):
 		self.__startSerif = serif.Flick(serif.START)
 		verts = self.getCtrlVerticesAsList()
@@ -91,6 +102,9 @@ class Stroke(shapes.splines.BezierSpline):
 
 	def removeStartSerif(self):
 		self.__startSerif = None
+
+	def getStartSerif(self):
+		return self.__startSerif
 
 	def calcCurvePoints(self):
 		numPts = shapes.splines.BezierSpline.getNumCurvePoints(self)
@@ -160,8 +174,6 @@ class Stroke(shapes.splines.BezierSpline):
 		
 		if (newVert):
 			self.__strokeCtrlVerts.append(newVert)
-		
-		
 	
 	def setCtrlVertices(self, ctrlVerts):
 		self.__strokeCtrlVerts = ctrlVerts[:]
@@ -218,7 +230,27 @@ class Stroke(shapes.splines.BezierSpline):
 		self.setCtrlVerticesFromList(pts)	
 			
 		self.calcCurvePoints()
-				
+	
+	def makePreview(self, size=200):
+		xscale = (self.__mainBoundBox[2]-self.__mainBoundBox[0])*1.25
+		yscale = (self.__mainBoundBox[3]-self.__mainBoundBox[1])*1.25
+
+		scale = max(xscale, yscale)
+		
+		tmpBitmap = QtGui.QPixmap(scale, scale)
+		tmpBitmap.fill(QtGui.QColor(240, 240, 230))
+		
+		qp = QtGui.QPainter(tmpBitmap)
+		qp.save()
+		qp.translate(-(self.__x + self.__mainBoundBox[0]), -(self.__y + self.__mainBoundBox[1]))
+		qp.translate(scale/2-xscale/2.5, scale/2-yscale/2.5)
+		self.draw(qp)
+
+		qp.restore()
+
+		self.__bitmapPreview = tmpBitmap.scaled(size, size, QtCore.Qt.KeepAspectRatioByExpanding, 1)
+		qp.end()
+
 	def draw(self, gc, showCtrlVerts=0, nib=None, selectedVert=-1):
 		self.__boundBoxes = []
 		self.__mainBoundBox = None
@@ -233,7 +265,9 @@ class Stroke(shapes.splines.BezierSpline):
 		elif (nib == None):
 			print "ERROR: No nib provided to draw stroke\n"
 			return
-			
+		else:
+			self.nib = nib
+		
 		gc.save()
 		gc.translate(self.__x, self.__y)		
 		
@@ -249,7 +283,7 @@ class Stroke(shapes.splines.BezierSpline):
 					
 				bboxPts = nib.draw(gc, curvePts[i][0],curvePts[i][1], \
 				         curvePts[i+1][0],curvePts[i+1][1])
-		
+
 				if bboxPts:
 					self.__boundBoxes.append(bboxPts)
 					
@@ -328,4 +362,13 @@ class Stroke(shapes.splines.BezierSpline):
 		return QtCore.QRect(self.__mainBoundBox[0], self.__mainBoundBox[1],
 							self.__mainBoundBox[2], self.__mainBoundBox[3])	
 
-
+	def getBitmap(self):
+		return self.__bitmapPreview
+	
+	def setBitmap(self, bmap):
+		self.__bitmapPreview = bmap
+		
+	def delBitmap(self):
+		del self.__bitmapPreview
+	
+	bitmapPreview = property(getBitmap, setBitmap, delBitmap, "bitmapPreview property")	

@@ -115,15 +115,7 @@ class Character(object):
 		return newStroke
 		
 	def copyStroke(self, strokeToCopy):
-		copiedStroke = stroke_qt.Stroke()
-				
-		pts = strokeToCopy.getCtrlVertices()
-		
-		copiedStroke.setCtrlVertices(pts)
-		copiedStroke.setNumCurvePoints(strokeToCopy.getNumCurvePoints())
-		pos = strokeToCopy.getPos()
-		copiedStroke.setPos(pos[0], pos[1])
-		copiedStroke.calcCurvePoints()
+		copiedStroke = stroke_qt.Stroke(fromStroke=strokeToCopy)
 		
 		return copiedStroke
 		
