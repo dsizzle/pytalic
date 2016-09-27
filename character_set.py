@@ -6,6 +6,7 @@ class character_set(object):
 	def __init__(self):
 		self.__characters = {}
 		self.__currentChar = None
+		self.__savedStrokes = []
 
 	def newCharacter(self, charCode):
 		myChar = character.Character()
@@ -44,6 +45,18 @@ class character_set(object):
 		
 	def getCharList(self):
 		return self.__characters
+		
+	def getSavedStrokes(self):
+		return self.__savedStrokes
+
+	def saveStroke(self, item):
+		self.__savedStrokes.append(item)
+
+	def getSavedStroke(self, idx):
+		if len(self.__savedStrokes) > idx:
+			return self.__savedStrokes[idx]
+		else:
+			return None
 			
 	def serialize(self, fileName=None):
 		if not (fileName):

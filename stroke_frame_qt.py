@@ -5,6 +5,7 @@ import sys
 import character_set
 import stroke_edit_ui_qt
 import nibs_qt
+import stroke_qt
 
 from PyQt4 import QtGui, QtCore, QtSvg
 
@@ -24,7 +25,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.__redoStack = []
 		self.mainMenu = None
 		self.charData = None
-		
 		self.fileOpenDlg = QtGui.QFileDialog() 
 		self.fileSaveDlg = QtGui.QFileDialog() 
 		self.colorPickerDlg = QtGui.QColorDialog()
@@ -234,6 +234,15 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		strokeAddVertex.triggered.connect(self.addControlPoint_cb)
 		strokeMenu.addAction(strokeAddVertex)
 	
+		strokeMenu.addSeparator()
+		strokeSave = QtGui.QAction("Save Stroke", self)
+		strokeSave.triggered.connect(self.saveStroke_cb)
+		strokeMenu.addAction(strokeSave)
+
+		strokeLoad = QtGui.QAction("Paste From Saved", self)
+		strokeLoad.triggered.connect(self.pasteFromSaved_cb)
+		strokeMenu.addAction(strokeLoad)
+
 		helpAbout = QtGui.QAction("About", self)
 		helpAbout.triggered.connect(self.about_cb)
 		helpMenu.addAction(helpAbout)
@@ -265,10 +274,6 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.charSelectorList.addItems(QtCore.QStringList(charList))
 		self.charSelectorList.setIconSize(QtCore.QSize(gICON_SIZE, gICON_SIZE))
 		self.charSelectorList.currentItemChanged.connect(self.charSelected)
-		self.charSelectorList.setAutoFillBackground(True)
-		p = self.charSelectorList.palette()
-		p.setColor(self.charSelectorList.backgroundRole(), QtCore.Qt.red)
-		self.charSelectorList.setPalette(p)
 
 		blankPixmap = QtGui.QPixmap(gICON_SIZE, gICON_SIZE)
 		blankPixmap.fill(QtGui.QColor(240, 240, 230))
@@ -279,6 +284,14 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.charSelectorLayout.addWidget(self.charSelectorList, 0, QtCore.Qt.AlignTop)
 		charSelectHgt = self.charSelectorList.height()
 			
+		self.strokeSelectorLayout = QtGui.QHBoxLayout()
+		self.strokeSelectorList = QtGui.QListWidget(self)
+		self.strokeSelectorList.setFlow(QtGui.QListView.LeftToRight)
+		self.strokeSelectorList.resize(self.width(), gICON_SIZE)
+		self.strokeSelectorList.setMaximumHeight(gICON_SIZE*2)
+		self.strokeSelectorList.setIconSize(QtCore.QSize(gICON_SIZE, gICON_SIZE))
+		self.strokeSelectorLayout.addWidget(self.strokeSelectorList)
+		
 		self.mainLayout = QtGui.QVBoxLayout() #self.uberMainFrame)
 		
 		self.mainSplitter = MySplitter (self)
@@ -485,6 +498,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.dwgWindow.setSizePolicy(mainSizePolicy)
 
 		self.uberMainLayout.addLayout(self.charSelectorLayout)
+		self.uberMainLayout.addLayout(self.strokeSelectorLayout)
 		self.uberMainLayout.addLayout(self.mainLayout, 2)
 
 		self.mainWidget = QtGui.QWidget()
@@ -623,6 +637,30 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		
 		self.dwgArea.repaint()
 	 
+	def saveStroke_cb(self, event):
+		selectedStrokes = self.dwgArea.getSelectedStrokes()
+
+		for stroke in selectedStrokes:
+			stroke.makePreview(gICON_SIZE)
+			itemNum = self.strokeSelectorList.count()
+			self.strokeSelectorList.addItem(str(itemNum))
+			curItem = self.strokeSelectorList.item(itemNum)
+			curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
+			self.charData.saveStroke(stroke_qt.Stroke(fromStroke=stroke))
+
+	def pasteFromSaved_cb(self, event):
+		strokeSel = self.strokeSelectorList.currentRow()
+		curChar = self.charData.getCurrentChar()
+	
+		if strokeSel >= 0:
+			stroke = self.charData.getSavedStroke(strokeSel)
+			selectList = []
+			selectList.append(curChar.addStroke(stroke))
+
+			self.dwgArea.setSelectedStrokes(selectList)
+		
+			self.dwgArea.repaint()
+
 	def viewToggleGuidelines_cb(self, event):
 		self.dwgArea.toggleGuidelines()	
 		self.dwgArea.repaint()
