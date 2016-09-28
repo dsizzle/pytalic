@@ -295,17 +295,13 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.mainLayout = QtGui.QVBoxLayout() #self.uberMainFrame)
 		
 		self.mainSplitter = MySplitter (self)
+
+		self.dwgArea = stroke_edit_ui_qt.mainDrawingArea(self) 
 		
-		self.dwgWindow = QtGui.QFrame()
-		
-		self.dwgArea = stroke_edit_ui_qt.mainDrawingArea(self.dwgWindow,QtCore.QPoint(2, 2), QtCore.QSize(wid80-4, hgt-4)) #-toolBarHgt))
-		
-		self.dwgWindow.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken); #6);  # Sunken
-		self.dwgWindow.setLineWidth(2)
-		self.dwgWindow.resize(wid80, hgt)
+		self.dwgArea.setFrameStyle(QtGui.QFrame.Panel | QtGui.QFrame.Sunken); #6);  # Sunken
+		self.dwgArea.setLineWidth(2)
 		
 		self.toolPane = QtGui.QFrame()
-		self.toolPane.resize(wid20, hgt)
 		self.toolPaneLayout = QtGui.QVBoxLayout(self.toolPane)
 		
 		self.propertyTabs = QtGui.QTabWidget(self.toolPane)
@@ -484,10 +480,11 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.toolPane.setLayout(self.toolPaneLayout)
 		self.toolPane.setMaximumWidth(self.toolPane.width())
 		
-		self.mainSplitter.addWidget(self.dwgWindow)
+		self.mainSplitter.addWidget(self.dwgArea)
 		self.mainSplitter.addWidget(self.toolPane)
 		self.mainSplitter.setMaxPaneWidth(self.toolPane.width())
-
+		self.mainSplitter.setSizes([wid80, wid20])
+		
 		self.mainLayout.addWidget(self.mainSplitter)
 		self.mainLayout.setMargin(0)
 		self.mainLayout.setSpacing(0)
@@ -495,7 +492,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		mainSizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
 		self.mainSplitter.setSizePolicy(mainSizePolicy)
 		
-		self.dwgWindow.setSizePolicy(mainSizePolicy)
+		self.dwgArea.setSizePolicy(mainSizePolicy)
 
 		self.uberMainLayout.addLayout(self.charSelectorLayout)
 		self.uberMainLayout.addLayout(self.strokeSelectorLayout)
@@ -1176,22 +1173,19 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			self.gapHeightSpin.setValue(val)
 
 	def resizeEvent(self, evt):
-		self.dwgArea.resize(self.width(), self.height())
-		self.repaint()
-			
+		self.repaint()	
 	
 class MySplitter(QtGui.QSplitter):
 	def __init__(self, parent):
 		QtGui.QSplitter.__init__(self, parent)
 		self.parent = parent
 		self.maxPaneWidth = None
-
+	
 	def createHandle(self):
 		splitterHandle = MySplitterHandle(1, self)
 		QtCore.QObject.connect(splitterHandle, QtCore.SIGNAL("doubleClickSignal"), self.onSashDoubleClick)
-		QtCore.QObject.connect(self, QtCore.SIGNAL("splitterMoved(int, int)"), self.splitterMoved)
 		return splitterHandle
-	
+
 	def onSashDoubleClick(self):
 		dwgArea = self.widget(0)
 		toolPane = self.widget(1)
@@ -1206,10 +1200,6 @@ class MySplitter(QtGui.QSplitter):
 		
 		self.repaint()
 		
-	def splitterMoved(self, pos, handle):
-		self.parent.dwgArea.resize(self.parent.width(), self.parent.height())
-		self.repaint()
-	
 	def setMaxPaneWidth(self, width):
 		self.maxPaneWidth = width
 			

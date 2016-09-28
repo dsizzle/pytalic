@@ -7,12 +7,10 @@ from PyQt4 import QtCore, QtGui, QtSvg, Qt
 import guides_qt
 import character_set
 
-class mainDrawingArea(QtGui.QWidget):
-	def __init__(self, parent, pos, size):
+class mainDrawingArea(QtGui.QFrame):
+	def __init__(self, parent): 
 		QtGui.QWidget.__init__(self, parent)
 		self.setFocusPolicy(QtCore.Qt.ClickFocus)
-		self.resize(size.width(), size.height())
-		self.move(pos.x(), pos.y())
 		self.setMouseTracking(True)
 		
 		self.__drawGuidelines = 1
@@ -63,7 +61,7 @@ class mainDrawingArea(QtGui.QWidget):
 
 		self.__last_time = None
 		self.__now_time = None
-		
+
 	def setUndoStack(self, undoStack):
 		self.__undoStack = undoStack
 		
@@ -1071,3 +1069,4 @@ class mainDrawingArea(QtGui.QWidget):
 			
 			dc.drawEllipse(self.__snappedGridPts[0], self.__snapTolerance*2, self.__snapTolerance*2)
 			
+		QtGui.QFrame.paintEvent(self,event)
