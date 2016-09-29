@@ -482,7 +482,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		
 		self.mainSplitter.addWidget(self.dwgArea)
 		self.mainSplitter.addWidget(self.toolPane)
-		self.mainSplitter.setMaxPaneWidth(self.toolPane.width())
+		self.mainSplitter.setMaxPaneWidth(wid20)
 		self.mainSplitter.setSizes([wid80, wid20])
 		
 		self.mainLayout.addWidget(self.mainSplitter)
@@ -1179,8 +1179,8 @@ class MySplitter(QtGui.QSplitter):
 	def __init__(self, parent):
 		QtGui.QSplitter.__init__(self, parent)
 		self.parent = parent
-		self.maxPaneWidth = None
-	
+		self.maxPaneWidth = 0
+
 	def createHandle(self):
 		splitterHandle = MySplitterHandle(1, self)
 		QtCore.QObject.connect(splitterHandle, QtCore.SIGNAL("doubleClickSignal"), self.onSashDoubleClick)
@@ -1190,13 +1190,13 @@ class MySplitter(QtGui.QSplitter):
 		dwgArea = self.widget(0)
 		toolPane = self.widget(1)
 		
-		if (self.maxPaneWidth is None):
+		if (self.maxPaneWidth == 0):
 			self.maxPaneWidth = toolPane.width()
 		
 		if (toolPane.size().width() > 0):
-			self.moveSplitter(dwgArea.width()+self.maxPaneWidth, 1)
+			self.moveSplitter(self.width(), 1)
 		else:
-			self.moveSplitter(dwgArea.width()-self.maxPaneWidth, 1)
+			self.moveSplitter(self.width()-self.maxPaneWidth, 1)
 		
 		self.repaint()
 		
