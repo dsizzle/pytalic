@@ -935,7 +935,7 @@ class mainDrawingArea(QtGui.QFrame):
 			self.repaint()
 		
 		fullImg = QtGui.QPixmap.grabWidget(self, 0, 0, self.width(), self.height())
-		if (fullImg):
+		if (fullImg) and (fullImg.width() > 0) and (fullImg.height() > 0):
 			iconBitmap = fullImg.scaled(scale, scale, QtCore.Qt.KeepAspectRatioByExpanding, 1)
 		else:
 			iconBitmap = None
