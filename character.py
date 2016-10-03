@@ -5,11 +5,13 @@ import random
 import math
 import copy
 
+CURVE_RESOLUTION = 10
+
 class Character(object):
 	def __init__(self):
 		self.__strokes = []
 		self.__defCv = [[1,1],[1, 50],[1, 50],[1, 100]]
-		self.__defNumPts = len(self.__defCv) * 15
+		self.__defNumPts = len(self.__defCv) * CURVE_RESOLUTION
 		self.__nib = None
 		self.__bitmapPreview = None
 		
@@ -69,7 +71,7 @@ class Character(object):
 			tempCv.append([pt[0]-startX+1, pt[1]-startY+1])
 		
 		myStroke.setCtrlVerticesFromList(tempCv)
-		myStroke.setNumCurvePoints(len(tempCv * 10))
+		myStroke.setNumCurvePoints(len(tempCv * CURVE_RESOLUTION))
 		myStroke.setPos(startX, startY)
 		
 		myStroke.calcCurvePoints()
@@ -98,7 +100,7 @@ class Character(object):
 			tempCv.append([pt[0]-startX+1, pt[1]-startY+1])
 		
 		myStroke.setCtrlVerticesFromList(tempCv)
-		myStroke.setNumCurvePoints(len(tempCv * 35))
+		myStroke.setNumCurvePoints(len(tempCv * CURVE_RESOLUTION))
 		myStroke.setPos(startX, startY)
 
 		myStroke.calcCurvePoints()
