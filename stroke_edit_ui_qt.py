@@ -394,6 +394,12 @@ class mainDrawingArea(QtGui.QFrame):
 		elif ypos < ytop:
 			ypos = ytop
 		
+		wdiv2 = winSize.width()/2
+		hdiv2 = winSize.height()/2
+
+		xpos = xpos - wdiv2
+		ypos = ypos - hdiv2
+
 		pt.setX(xpos)
 		pt.setY(ypos)
 	
@@ -991,6 +997,9 @@ class mainDrawingArea(QtGui.QFrame):
 		 	self.__guideLines.draw(dc, winSize, self.__nib)
 		if self.__drawNibGuides:
 			self.drawGuides(dc, winSize, self.__nib)
+		
+		dc.save()
+		dc.translate(w/2, h/2)
 			
 		if self.__charData:
 			strokeList = self.__charData.strokes
@@ -1068,5 +1077,7 @@ class mainDrawingArea(QtGui.QFrame):
 			dc.setBrush(self.__clearBrush)
 			
 			dc.drawEllipse(self.__snappedGridPts[0], self.__snapTolerance*2, self.__snapTolerance*2)
+			
+		dc.restore()
 			
 		QtGui.QFrame.paintEvent(self,event)
