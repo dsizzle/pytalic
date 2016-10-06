@@ -136,15 +136,15 @@ class guideLines(object):
 				
 			while (startPos < size.width()):
 				pos = startPos+(float(vpos-(baseHeight))*-self.__angleDX)
-				self.__gridPts.append([pos, vpos-(baseHeight)])
+				self.__gridPts.append([int(pos), int(vpos-(baseHeight))])
 				pos = startPos+((vpos-(capHeight))*-self.__angleDX)
-				self.__gridPts.append([pos, vpos-(capHeight)])
+				self.__gridPts.append([int(pos), int(vpos-(capHeight))])
 				pos = startPos+((vpos-(ascentHeight))*-self.__angleDX)
-				self.__gridPts.append([pos, vpos-(ascentHeight)])
+				self.__gridPts.append([int(pos), int(vpos-(ascentHeight))])
 				pos = startPos+(float(vpos)*-self.__angleDX)
-				self.__gridPts.append([pos, vpos])
+				self.__gridPts.append([int(pos), int(vpos)])
 				pos = startPos+(float(vpos+(descentHeight))*-self.__angleDX)
-				self.__gridPts.append([pos, vpos+(descentHeight)])
+				self.__gridPts.append([int(pos), int(vpos+(descentHeight))])
 				
 				startPos = startPos + baseWidth
 		
