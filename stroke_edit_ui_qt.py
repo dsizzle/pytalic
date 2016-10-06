@@ -320,8 +320,10 @@ class mainDrawingArea(QtGui.QFrame):
 			if self.__snapToNibAxes: # and (self.__snappedAxisPts is None):	
 				self.snapPointToNibAxes(pt)
 			if self.__snapToGrid:
+				pt = event.pos()
 				self.snapPointToGrid(pt)
-					
+				self.__normalizeMouseCoords__(pt)
+
 			self.onDrag(pt.x(), pt.y())
 	
 	def mousePressEvent(self, event):
@@ -503,22 +505,28 @@ class mainDrawingArea(QtGui.QFrame):
 				
 	def snapPointToGrid(self, pt):
 		self.__snappedGridPts = None
-		
+		winSize = self.size()
+		wdiv2 = winSize.width()/2
+		hdiv2 = winSize.height()/2
+
 		if (self.__selectedPt >= 0):
 			if (self.__selectedPt >= 0):
 				offset = self.__selection[0].getPos()
 				gridPts = self.__guideLines.getGridPts()
 				
 				normPt = [pt.x(), pt.y()]
-				
 				for testPt in gridPts:
-					dx = abs(normPt[0]-testPt[0])
-					dy = abs(normPt[1]-testPt[1])
+					dx = abs((normPt[0]-wdiv2) - testPt[0])
+					dy = abs((normPt[1]-hdiv2) - testPt[1])
 
 					if (dx < self.__snapTolerance) and (dy < self.__snapTolerance):
-						pt.setX(testPt[0])
-						pt.setY(testPt[1])
-						self.__snappedGridPts = [QtCore.QPoint(testPt[0], testPt[1])]
+						pt.setX(testPt[0]+(self.__snapTolerance/2)+wdiv2)
+						pt.setY(testPt[1]+(self.__snapTolerance/2)+hdiv2)
+						self.__snappedGridPts = [QtCore.QPoint(testPt[0]+self.__snapTolerance/2, testPt[1]+self.__snapTolerance/2)]
+
+						return
+					
+
 						
 	def setCtrlVertBehavior(self, args):
 		if (args.has_key('stroke')):
