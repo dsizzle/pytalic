@@ -8,7 +8,7 @@ class guideLines(object):
 	def __init__(self):
 		# units are nibwidths from baseline
 		self.__baseHeight = 5
-		self.__width = 3
+		self.__width = 4
 		self.__ascentHeight = 3
 		self.__descentHeight = 3
 		self.__capHeight = 2
