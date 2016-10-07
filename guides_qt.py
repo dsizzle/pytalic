@@ -104,11 +104,16 @@ class guideLines(object):
 		return self.__baselineY
 	
 	baselineY = property(getBaselineY, setBaselineY)
-	def calculateGridPts(self, size, nibWidth):
+	def calculateGridPts(self, size, nibWidth=0):
 		self.__gridPts = []
-		if not nibWidth:
-			return
-		
+		if nibWidth == 0:
+			if self.__lastNibWidth == 0:
+				return
+			else:
+				nibWidth = self.__lastNibWidth
+			
+		wdiv2 = size.width()/2
+		hdiv2 = size.height()/2
 		baseWidth = nibWidth * self.__width
 		halfBaseWidth = nibWidth * self.__width / 2
 		baseHeight = nibWidth * self.__baseHeight
@@ -125,6 +130,7 @@ class guideLines(object):
 		while (vpos > 0):
 			vpos = vpos - (ascentHeight + descentHeight + gapHeight)
 			
+		vpos = vpos - hdiv2
 		#ddxx = float((0 - dx - baseDx) / size.height())
 		#print ddxx
 		while (vpos < (size.height() + gapHeight + ascentHeight)):
@@ -132,7 +138,7 @@ class guideLines(object):
 			while (startPos > 0):
 				startPos = startPos - baseWidth
 			
-			startPos = startPos + baseDx
+			startPos = startPos - wdiv2
 				
 			while (startPos < size.width()):
 				pos = startPos+(float(vpos-(baseHeight))*-self.__angleDX)
@@ -155,7 +161,7 @@ class guideLines(object):
 		
 	def draw(self, gc, size, nib):
 		nibWidth = nib.getWidth() << 1
-			
+		self.__lastNibWidth = nibWidth
 		baseWidth = nibWidth * self.__width
 		halfBaseWidth = nibWidth * self.__width / 2
 		baseHeight = nibWidth * self.__baseHeight
@@ -165,9 +171,7 @@ class guideLines(object):
 		gapHeight = nibWidth * self.__gapHeight
 		self.__baseX = (size.width() / 2)
 		self.__baselineY = (size.height() / 2)
-		if (not nibWidth == self.__lastNibWidth):
-			self.__lastNibWidth = nibWidth
-			self.calculateGridPts(size, nibWidth)
+		self.calculateGridPts(size, nibWidth)
 			
 		dx = self.__angleDX * (size.height() - self.__baselineY)
 		baseDx = self.__angleDX * self.__baselineY
@@ -236,7 +240,6 @@ class guideLines(object):
 		gc.setPen(self.__linePen)
 		gc.drawLine(self.__baseX-(halfBaseWidth)-dx, size.height(), self.__baseX-(halfBaseWidth)+baseDx, 0)
 		gc.drawLine(self.__baseX+(halfBaseWidth)-dx, size.height(), self.__baseX+(halfBaseWidth)+baseDx, 0)
-		
 		
 		return
 		

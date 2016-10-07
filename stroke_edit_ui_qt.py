@@ -160,6 +160,7 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__addCtrlPoint = 0
 	
 	def resizeEvent(self, event):
+		self.__guideLines.calculateGridPts(self.size())
 		self.repaint()
 	
 	def addControlPoint(self):
@@ -520,9 +521,9 @@ class mainDrawingArea(QtGui.QFrame):
 					dy = abs((normPt[1]-hdiv2) - testPt[1])
 
 					if (dx < self.__snapTolerance) and (dy < self.__snapTolerance):
-						pt.setX(testPt[0]+(self.__snapTolerance/2)+wdiv2)
-						pt.setY(testPt[1]+(self.__snapTolerance/2)+hdiv2)
-						self.__snappedGridPts = [QtCore.QPoint(testPt[0]+self.__snapTolerance/2, testPt[1]+self.__snapTolerance/2)]
+						pt.setX(testPt[0]+wdiv2)
+						pt.setY(testPt[1]+hdiv2)
+						self.__snappedGridPts = [QtCore.QPoint(testPt[0], testPt[1])]
 
 						return
 					
