@@ -1088,5 +1088,5 @@ class mainDrawingArea(QtGui.QFrame):
 			dc.drawEllipse(self.__snappedGridPts[0], self.__snapTolerance*2, self.__snapTolerance*2)
 			
 		dc.restore()
-			
+		dc.end()
 		QtGui.QFrame.paintEvent(self,event)
