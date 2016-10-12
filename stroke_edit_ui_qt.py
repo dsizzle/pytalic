@@ -13,8 +13,8 @@ class mainDrawingArea(QtGui.QFrame):
 		self.setFocusPolicy(QtCore.Qt.ClickFocus)
 		self.setMouseTracking(True)
 		
-		self.__drawGuidelines = 1
-		self.__drawNibGuides = 1
+		self.__drawGuidelines = True
+		self.__drawNibGuides = True
 		self.__charData = None
 		self.__selection = [] #None
 		self.__dragging = 0
@@ -118,35 +118,20 @@ class mainDrawingArea(QtGui.QFrame):
 		self.repaint()
 	
 	def toggleGuidelines(self):
-		if (self.__drawGuidelines == 0):
-			self.__drawGuidelines = 1
-		else:
-			self.__drawGuidelines = 0
+		self.__drawGuidelines = not self.__drawGuidelines
 	
 	def toggleNibGuides(self):
-		if (self.__drawNibGuides == 0):
-			self.__drawNibGuides = 1
-		else:
-			self.__drawNibGuides = 0
+		self.__drawNibGuides = not self.__drawNibGuides
 		
 	def toggleSnapAxially(self):
-		if (self.__snapAxially == False):
-			self.__snapAxially = True
-		else:
-			self.__snapAxially = False
+		self.__snapAxially = not self.__snapAxially
 	
 	def toggleSnapToNibAxes(self):
-		if (self.__snapToNibAxes == False):
-			self.__snapToNibAxes = True
-		else:
-			self.__snapToNibAxes = False
+		self.__snapToNibAxes = not self.__snapToNibAxes
 	
 	def toggleSnapToGrid(self):
-		if (self.__snapToGrid == False):
-			self.__snapToGrid = True
-		else:
-			self.__snapToGrid = False
-					
+		self.__snapToGrid = not self.__snapToGrid
+
 	def newStroke(self):
 		self.__newFreehandStroke = 0
 		self.__newStroke = 1
