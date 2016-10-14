@@ -187,7 +187,13 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		viewSnapToGrid.setChecked(False)
 		viewSnapMenu.addAction(viewSnapToGrid)
 		
-	# 	#viewSnapMenu.Append(MENUID_VIEW_SNAP_GUIDES, 'To Guidelines', 'Snap to guidelines')
+		viewSnapToCtrlPts = QtGui.QAction("To Control Points", self)
+		viewSnapToCtrlPts.setStatusTip('Toggle snapping to control points')
+		viewSnapToCtrlPts.triggered.connect(self.viewToggleSnapToCtrlPts_cb)
+		viewSnapToCtrlPts.setCheckable(True)
+		viewSnapToCtrlPts.setChecked(False)
+		viewSnapMenu.addAction(viewSnapToCtrlPts)
+		
 	# 	#viewSnapMenu.Append(MENUID_VIEW_SNAP_STROKE, 'To Strokes', 'Snap to strokes')
 		
 		strokeNew = QtGui.QAction("New", self)
@@ -676,6 +682,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 	
 	def viewToggleSnapToGrid_cb(self, event):
 		self.dwgArea.toggleSnapToGrid()
+		self.dwgArea.repaint()
+		
+	def viewToggleSnapToCtrlPts_cb(self, event):
+		self.dwgArea.toggleSnapToCtrlPts()
 		self.dwgArea.repaint()
 		
 	# 		

@@ -44,6 +44,7 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__snapAxially = True
 		self.__snapToNibAxes = False
 		self.__snapToGrid = False
+		self.__snapToCtrlPts = False
 		self.__snapTolerance = 10
 		self.__slopeTolerancePosA = 0
 		self.__slopeToleranceNegA = 0
@@ -52,7 +53,8 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__snappedNibPts = None
 		self.__snappedAxisPts = None
 		self.__snappedGridPts = None
-		
+		self.__snappedCtrlPts = None
+
 		self.__guideLines = guides_qt.guideLines()
 		self.__guideLines.angle
 		
@@ -131,6 +133,9 @@ class mainDrawingArea(QtGui.QFrame):
 	
 	def toggleSnapToGrid(self):
 		self.__snapToGrid = not self.__snapToGrid
+
+	def toggleSnapToCtrlPts(self):
+		self.__snapToCtrlPts = not self.__snapToCtrlPts
 
 	def newStroke(self):
 		self.__newFreehandStroke = 0
@@ -300,7 +305,8 @@ class mainDrawingArea(QtGui.QFrame):
 			self.__snappedNibPts = None
 			self.__snappedAxisPts = None
 			self.__snappedGridPts = None
-			
+			self.__snappedCtrlPts = None
+
 			if self.__snapAxially:
 				self.snapPointAxially(pt)
 			if self.__snapToNibAxes: # and (self.__snappedAxisPts is None):	
@@ -309,7 +315,9 @@ class mainDrawingArea(QtGui.QFrame):
 				pt = event.pos()
 				self.snapPointToGrid(pt)
 				self.__normalizeMouseCoords__(pt)
-
+			if self.__snapToCtrlPts:
+				self.snapPointToCtrlPts(pt)
+				
 			self.onDrag(pt.x(), pt.y())
 	
 	def mousePressEvent(self, event):
@@ -512,8 +520,41 @@ class mainDrawingArea(QtGui.QFrame):
 
 						return
 					
+			
+	def snapPointToCtrlPts(self, pt):
+		self.__snappedCtrlPts = None
+		winSize = self.size()
+		wdiv2 = winSize.width()/2
+		hdiv2 = winSize.height()/2
 
-						
+		if (self.__selectedPt >= 0):
+			cur_offset = self.__selection[0].getPos()
+			normPt = [pt.x(), pt.y()]
+			
+			if self.__charData:
+				for stroke in self.__charData.strokes:
+					selPt = self.getSelectedCtrlPoint()
+					ctrlPts = stroke.getCtrlVertices(False)
+					numPts = len(ctrlPts)
+					offset = stroke.getPos()
+
+					for i in range(0, numPts):
+						# don't snap to self; that'd be awkward
+						if selPt == ctrlPts[i]:
+							continue
+
+						pos = ctrlPts[i].getPos()
+
+						dx = abs((pos[0]+offset[0])-normPt[0])
+						dy = abs((pos[1]+offset[1])-normPt[1])
+
+						if (dx < self.__snapTolerance) and (dy < self.__snapTolerance):
+							pt.setX(pos[0]+offset[0])
+							pt.setY(pos[1]+offset[1])
+
+							self.__snappedCtrlPts = [QtCore.QPoint(pos[0]+offset[0], pos[1]+offset[1])]
+							return
+							
 	def setCtrlVertBehavior(self, args):
 		if (args.has_key('stroke')):
 			selStroke = args['stroke']
@@ -644,6 +685,7 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__snappedNibPts = None
 		self.__snappedAxisPts = None
 		self.__snappedGridPts = None
+		self.__snappedCtrlPts = None
 		
 		insideStrokes = []
 		hit = 0
@@ -1071,6 +1113,12 @@ class mainDrawingArea(QtGui.QFrame):
 			dc.setBrush(self.__clearBrush)
 			
 			dc.drawEllipse(self.__snappedGridPts[0], self.__snapTolerance*2, self.__snapTolerance*2)
+			
+		if (self.__snappedCtrlPts) and (self.__draggingCtrlPt):
+			dc.setPen(self.__dkGrayPenDashed)
+			dc.setBrush(self.__clearBrush)
+			
+			dc.drawEllipse(self.__snappedCtrlPts[0], self.__snapTolerance*2, self.__snapTolerance*2)
 			
 		dc.restore()
 		dc.end()
