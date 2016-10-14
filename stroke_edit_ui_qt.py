@@ -504,22 +504,20 @@ class mainDrawingArea(QtGui.QFrame):
 		hdiv2 = winSize.height()/2
 
 		if (self.__selectedPt >= 0):
-			if (self.__selectedPt >= 0):
-				offset = self.__selection[0].getPos()
-				gridPts = self.__guideLines.getGridPts()
-				
-				normPt = [pt.x(), pt.y()]
-				for testPt in gridPts:
-					dx = abs((normPt[0]-wdiv2) - testPt[0])
-					dy = abs((normPt[1]-hdiv2) - testPt[1])
+			offset = self.__selection[0].getPos()
+			gridPts = self.__guideLines.getGridPts()
+			
+			normPt = [pt.x(), pt.y()]
+			for testPt in gridPts:
+				dx = abs((normPt[0]-wdiv2) - testPt[0])
+				dy = abs((normPt[1]-hdiv2) - testPt[1])
 
-					if (dx < self.__snapTolerance) and (dy < self.__snapTolerance):
-						pt.setX(testPt[0]+wdiv2)
-						pt.setY(testPt[1]+hdiv2)
-						self.__snappedGridPts = [QtCore.QPoint(testPt[0], testPt[1])]
+				if (dx < self.__snapTolerance) and (dy < self.__snapTolerance):
+					pt.setX(testPt[0]+wdiv2)
+					pt.setY(testPt[1]+hdiv2)
+					self.__snappedGridPts = [QtCore.QPoint(testPt[0], testPt[1])]
 
-						return
-					
+					return
 			
 	def snapPointToCtrlPts(self, pt):
 		self.__snappedCtrlPts = None
