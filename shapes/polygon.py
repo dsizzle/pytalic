@@ -48,8 +48,22 @@ def normalizePolyRotation(pts):
 			count += 1
 	
 	return [[rx1, ry1], [rx2, ry2], [rx3, ry3], [rx4, ry4]]		
-	
 
+def getCentroid(pts, normalize=False):	
+	if normalize:
+		normPts = normalizePolyRotation(pts)
+	else:
+		normPts = pts
+
+	xList, yList = zip(*pts)
+	
+	maxX = max(xList)
+	maxY = max(yList)
+	minX = min(xList)
+	minY = min(yList)
+
+	return [ minX+((maxX-minX)/2), minY+((maxY-minY)/2)]
+	
 def __isLeft__(pt0, pt1, pt2):
 			
 		return ((pt1[0] - pt0[0]) * (pt2[1] - pt0[1]) - \

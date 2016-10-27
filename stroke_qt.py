@@ -270,7 +270,7 @@ class Stroke(shapes.splines.BezierSpline):
 		
 		gc.save()
 		gc.translate(self.__x, self.__y)		
-		
+
 		curvePts = self.getCurvePoints()
 		
 		for i in range(0, (len(curvePts)-1)):
@@ -347,6 +347,8 @@ class Stroke(shapes.splines.BezierSpline):
 					
 				bboxIdx = bboxIdx + 1
 		
+		origbboxIdx = bboxIdx
+			
 		vertIdx = 0		
 		if (inside):
 			for i in range(1, numCtrlVerts):
@@ -356,7 +358,7 @@ class Stroke(shapes.splines.BezierSpline):
 			while (bboxIdx > boxesPerVert):
 				bboxIdx = bboxIdx - boxesPerVert
 		
-		return vertIdx, float(bboxIdx)/float(boxesPerVert)
+		return vertIdx, origbboxIdx, float(bboxIdx)/float(boxesPerVert)
 	
 	def getBoundRect(self):
 		return QtCore.QRect(self.__mainBoundBox[0], self.__mainBoundBox[1],
@@ -371,4 +373,7 @@ class Stroke(shapes.splines.BezierSpline):
 	def delBitmap(self):
 		del self.__bitmapPreview
 	
+	def getHitPoint(self, idx):
+		return shapes.polygon.getCentroid(self.__boundBoxes[idx])
+
 	bitmapPreview = property(getBitmap, setBitmap, delBitmap, "bitmapPreview property")	

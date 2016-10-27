@@ -45,6 +45,7 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__snapToNibAxes = False
 		self.__snapToGrid = False
 		self.__snapToCtrlPts = False
+		self.__snapToStrokes = False
 		self.__snapTolerance = 10
 		self.__slopeTolerancePosA = 0
 		self.__slopeToleranceNegA = 0
@@ -54,6 +55,7 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__snappedAxisPts = None
 		self.__snappedGridPts = None
 		self.__snappedCtrlPts = None
+		self.__snappedStrokePts = None
 
 		self.__guideLines = guides_qt.guideLines()
 		self.__guideLines.angle
@@ -136,6 +138,9 @@ class mainDrawingArea(QtGui.QFrame):
 
 	def toggleSnapToCtrlPts(self):
 		self.__snapToCtrlPts = not self.__snapToCtrlPts
+
+	def toggleSnapToStrokes(self):
+		self.__snapToStrokes = not self.__snapToStrokes
 
 	def newStroke(self):
 		self.__newFreehandStroke = 0
@@ -317,7 +322,9 @@ class mainDrawingArea(QtGui.QFrame):
 				self.__normalizeMouseCoords__(pt)
 			if self.__snapToCtrlPts:
 				self.snapPointToCtrlPts(pt)
-				
+			if self.__snapToStrokes:
+				self.snapPointToStroke(pt)
+
 			self.onDrag(pt.x(), pt.y())
 	
 	def mousePressEvent(self, event):
@@ -552,7 +559,30 @@ class mainDrawingArea(QtGui.QFrame):
 
 							self.__snappedCtrlPts = [QtCore.QPoint(pos[0]+offset[0], pos[1]+offset[1])]
 							return
-							
+	
+	def snapPointToStroke(self, pt):
+		self.__snappedStrokePts = None
+
+		if (self.__selectedPt >= 0):
+			cur_offset = self.__selection[0].getPos()
+			normPt = [pt.x(), pt.y()]
+			
+			if self.__charData:
+				for stroke in self.__charData.strokes:
+					if stroke == self.__selection[0]:
+						continue
+					
+					offset = stroke.getPos()
+					idx, bbox, junk = stroke.insideStroke(normPt)
+					if idx > 0:
+						hitPt = stroke.getHitPoint(bbox)
+						
+						pt.setX(hitPt[0]+offset[0])
+						pt.setY(hitPt[1]+offset[1])
+
+						self.__snappedStrokePts = [QtCore.QPoint(hitPt[0]+offset[0], hitPt[1]+offset[1])]
+						return
+
 	def setCtrlVertBehavior(self, args):
 		if (args.has_key('stroke')):
 			selStroke = args['stroke']
@@ -716,7 +746,7 @@ class mainDrawingArea(QtGui.QFrame):
 						
 			if (not hit):						
 				for stroke in strokeList:
-					idx, junk = stroke.insideStroke([xpos, ypos])
+					idx, bbox, junk = stroke.insideStroke([xpos, ypos])
 					if idx > 0:
 						insideStrokes.append(stroke)
 					
@@ -784,7 +814,7 @@ class mainDrawingArea(QtGui.QFrame):
 				self.__oldYpos = ypos	
 		elif (self.__addCtrlPoint):
 			for stroke in self.__selection:
-				ptIdx, t = stroke.insideStroke([xpos, ypos])
+				ptIdx, bbox, t = stroke.insideStroke([xpos, ypos])
 				if (ptIdx):
 					doArgs = {}
 					doArgs['stroke'] = stroke
@@ -1117,7 +1147,14 @@ class mainDrawingArea(QtGui.QFrame):
 			dc.setBrush(self.__clearBrush)
 			
 			dc.drawEllipse(self.__snappedCtrlPts[0], self.__snapTolerance*2, self.__snapTolerance*2)
+		
+		if (self.__snappedStrokePts) and (self.__draggingCtrlPt):
+			dc.setPen(self.__dkGrayPenDashed)
+			dc.setBrush(self.__clearBrush)
 			
+			dc.drawEllipse(self.__snappedStrokePts[0], self.__snapTolerance*2, self.__snapTolerance*2)
+		
+
 		dc.restore()
 		dc.end()
 		QtGui.QFrame.paintEvent(self,event)
