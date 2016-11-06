@@ -11,7 +11,6 @@ import random
 
 import shapes.splines
 import shapes.polygon
-import nibs_qt
 import control_vertex
 import serif
 
@@ -260,13 +259,12 @@ class Stroke(shapes.splines.BezierSpline):
 		maxY = 0
 		
 		random.seed(self.seed)
-		if (self.nib):
-			nib = self.nib
-		elif (nib == None):
+		
+		if (nib == None) and self.nib is None:
 			print "ERROR: No nib provided to draw stroke\n"
 			return
-		else:
-			self.nib = nib
+		elif self.nib is not None:
+			nib = self.nib
 		
 		gc.save()
 		gc.translate(self.__x, self.__y)		
