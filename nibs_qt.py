@@ -33,9 +33,23 @@ class Nib(object):
 		self.pen = QtGui.QPen(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), 90), 1, QtCore.Qt.SolidLine)
 		self.brush = QtGui.QBrush(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), 220), QtCore.Qt.SolidPattern)
 	
-	def getColor(self):
-		return self.color
+	def fromNib(self, nib):
+		self.width = nib.getWidth()
+		self.angle = nib.getAngle()
+		self.color = nib.getColor()
+
+		self.nibwidth_x = self.width * math.cos(self.angle * 
+		                    math.pi / 180.0)
+		self.nibwidth_y = self.width * math.sin(self.angle * 
+                            math.pi / 180.0)
+
+		self.seed = time.localtime()
+		self.pen = QtGui.QPen(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), 90), 1, QtCore.Qt.SolidLine)
+		self.brush = QtGui.QBrush(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), 220), QtCore.Qt.SolidPattern)
 	
+	def getColor(self):
+		return self.color 
+
 	def setAlpha(self, alpha):
 		self.pen = QtGui.QPen(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), ((90.0 / 255.0) * alpha)), 1, QtCore.Qt.SolidLine)
 		self.brush = QtGui.QBrush(QtGui.QColor(self.color.red(), self.color.green(), self.color.blue(), ((220.0 / 255.0) * alpha)), QtCore.Qt.SolidPattern)
@@ -139,6 +153,10 @@ class ScrollNib(Nib):
 		super(ScrollNib, self).__init__(width, angle, color)
 		self.setSplitSize(split)
 
+	def fromNib(self, nib):
+		super(ScrollNib, self).fromNib(nib)
+		self.setSplitSize(nib.getSplitSize())
+		
 	def setWidth(self, width):
 		super(ScrollNib, self).setWidth(width)
 		self.setSplitSize(self.split)
