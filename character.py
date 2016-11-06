@@ -1,4 +1,5 @@
 import stroke_qt
+import stroke_instance
 import thirdparty.dp
 
 import random
@@ -116,6 +117,12 @@ class Character(object):
 		self.__strokes.append(newStroke)
 		return newStroke
 		
+	def addStrokeInstance (self, strokeToAdd):
+		newStrokeInstance = stroke_instance.strokeInstance()
+		newStrokeInstance.setStroke(strokeToAdd)
+		self.__strokes.append(newStrokeInstance)
+		return newStrokeInstance
+
 	def copyStroke(self, strokeToCopy):
 		copiedStroke = stroke_qt.Stroke(fromStroke=strokeToCopy)
 		

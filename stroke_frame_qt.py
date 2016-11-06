@@ -140,6 +140,14 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		editPaste.triggered.connect(self.pasteStrokes_cb)
 		editMenu.addAction(editPaste)
 		self.toolBar.addAction(editPaste)
+
+		editPasteInstance = QtGui.QAction("Paste Instance", self)
+		editPasteInstance.setShortcut('Ctrl+Shift+V')
+		editPasteInstance.setIcon(QtGui.QIcon("icons/page_white_paste.png"))
+		editPasteInstance.setIconText("Paste Instance")
+		editPasteInstance.triggered.connect(self.pasteStrokesAsInstances_cb)
+		editMenu.addAction(editPasteInstance)
+		self.toolBar.addAction(editPasteInstance)
 		
 		#editMenu.addSeparator()
 		self.toolBar.addSeparator()
@@ -631,7 +639,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		curChar = self.charData.getCurrentChar()
 	
 		for stroke in selectedStrokes:
-			self.__clipBoard.append(curChar.copyStroke(stroke))
+			self.__clipBoard.append(stroke) #curChar.copyStroke(stroke))
 	
 	# probably should just be "paste_cb" and call view.paste
 	def pasteStrokes_cb(self, event):
@@ -640,6 +648,17 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		selectList = []
 		for stroke in self.__clipBoard:
 			selectList.append(curChar.addStroke(stroke))
+			
+		self.dwgArea.setSelectedStrokes(selectList)
+		
+		self.dwgArea.repaint()
+	
+	def pasteStrokesAsInstances_cb(self, event):
+		curChar = self.charData.getCurrentChar()
+	
+		selectList = []
+		for stroke in self.__clipBoard:
+			selectList.append(curChar.addStrokeInstance(stroke))
 			
 		self.dwgArea.setSelectedStrokes(selectList)
 		
