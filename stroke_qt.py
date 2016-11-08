@@ -9,6 +9,7 @@ import math
 import time
 import random
 
+import nibs_qt
 import shapes.splines
 import shapes.polygon
 import control_vertex
@@ -41,6 +42,7 @@ class Stroke(shapes.splines.BezierSpline):
 		self.__endFlourish = None
 		self.__handleSize = 10
 		self.__bitmapPreview = None
+
 		self.seed = time.localtime()
 		
 	def setPos(self, x, y):
@@ -243,7 +245,10 @@ class Stroke(shapes.splines.BezierSpline):
 		qp.save()
 		qp.translate(-(self.__x + self.__mainBoundBox[0]), -(self.__y + self.__mainBoundBox[1]))
 		qp.translate(scale/2-xscale/2.5, scale/2-yscale/2.5)
-		self.draw(qp)
+		
+		tmpNib = nibs_qt.Nib()
+		
+		self.draw(qp, 0, tmpNib)
 
 		qp.restore()
 
