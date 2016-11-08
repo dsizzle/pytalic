@@ -262,6 +262,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		strokeLoad.triggered.connect(self.pasteFromSaved_cb)
 		strokeMenu.addAction(strokeLoad)
 
+		strokeLoadInst = QtGui.QAction("Paste Instance From Saved", self)
+		strokeLoadInst.triggered.connect(self.pasteInstanceFromSaved_cb)
+		strokeMenu.addAction(strokeLoadInst)
+
 		helpAbout = QtGui.QAction("About", self)
 		helpAbout.triggered.connect(self.about_cb)
 		helpMenu.addAction(helpAbout)
@@ -683,6 +687,19 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			stroke = self.charData.getSavedStroke(strokeSel)
 			selectList = []
 			selectList.append(curChar.addStroke(stroke))
+
+			self.dwgArea.setSelectedStrokes(selectList)
+		
+			self.dwgArea.repaint()
+
+	def pasteInstanceFromSaved_cb(self, event):
+		strokeSel = self.strokeSelectorList.currentRow()
+		curChar = self.charData.getCurrentChar()
+	
+		if strokeSel >= 0:
+			stroke = self.charData.getSavedStroke(strokeSel)
+			selectList = []
+			selectList.append(curChar.addStrokeInstance(stroke))
 
 			self.dwgArea.setSelectedStrokes(selectList)
 		
