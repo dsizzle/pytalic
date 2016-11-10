@@ -331,7 +331,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.nibPropFrame = QtGui.QFrame()
 		self.nibPropLayout = QtGui.QFormLayout(self.nibPropFrame)
 		
-		nibTypeList = ["Flat", "Scroll", "Brush"]
+		nibTypeList = ["Flat", "Scroll", "Brush", "Pen"]
 		
 		self.nibTypeLabel = QtGui.QLabel(self.nibPropFrame)
 		self.nibTypeLabel.setText("Type:")
@@ -915,16 +915,27 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			if (self.nibIdx == 0):
 				self.nibSplitSizeLabel.setEnabled(False)
 				self.nibSplitSizeSpin.setEnabled(False)
+				self.nibAngleLabel.setEnabled(True)
+				self.nibAngleSpin.setEnabled(True)
 				self.__mainNib__ = nibs_qt.Nib(width, angle, color=self.__color__)
 			elif (self.nibIdx == 1):
 				self.nibSplitSizeLabel.setEnabled(True)
 				self.nibSplitSizeSpin.setEnabled(True)
+				self.nibAngleLabel.setEnabled(True)
+				self.nibAngleSpin.setEnabled(True)
 				self.__mainNib__ = nibs_qt.ScrollNib(width, angle, split, color=self.__color__)
-				
 			elif (self.nibIdx == 2):
 				self.nibSplitSizeLabel.setEnabled(False)
 				self.nibSplitSizeSpin.setEnabled(False)
+				self.nibAngleLabel.setEnabled(True)
+				self.nibAngleSpin.setEnabled(True)
 				self.__mainNib__ = nibs_qt.BrushNib(width, angle, color=self.__color__)
+			elif (self.nibIdx == 3):
+				self.nibSplitSizeLabel.setEnabled(False)
+				self.nibSplitSizeSpin.setEnabled(False)
+				self.nibAngleLabel.setEnabled(False)
+				self.nibAngleSpin.setEnabled(False)
+				self.__mainNib__ = nibs_qt.PenNib(width, angle, color=self.__color__)
 			
 			self.dwgArea.setNib(self.__mainNib__)	
 
