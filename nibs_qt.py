@@ -143,7 +143,47 @@ class Nib(object):
 				
 		self.setAngle(tempAngle)
 
-	
+class PenNib(Nib):
+	def draw(self, gc, x,y,x2=None,y2=None, seed=None):
+		dx = x2 - x
+		dy = y2 - y
+
+		tangent = 0
+
+		try:
+			tangent = dx / dy
+			angle = math.atan(tangent) * 180.0 / math.pi
+		
+		except ZeroDivisionError:
+			tangent = 0
+			angle = 90
+
+		self.setAngle(angle)
+		
+		pts = shapes.polygon.calcPoly(x, y, self.nibwidth_x, self.nibwidth_y, x2, y2)
+		pts = shapes.polygon.normalizePolyRotation(pts)
+		
+		poly = QtGui.QPolygon(4)
+		poly.setPoint(0, QtCore.QPoint(pts[0][0],pts[0][1]))
+		poly.setPoint(1, QtCore.QPoint(pts[1][0],pts[1][1]))
+		poly.setPoint(2, QtCore.QPoint(pts[2][0],pts[2][1]))
+		poly.setPoint(3, QtCore.QPoint(pts[3][0],pts[3][1]))
+		
+		pen = self.pen
+		nullpen = QtGui.QPen(QtGui.QColor(0, 0, 0, 0), 1, QtCore.Qt.SolidLine)
+		brush = self.brush
+		
+		gc.setPen(nullpen)
+		gc.setBrush(brush)
+		
+		gc.setPen(nullpen)
+		gc.drawPolygon(poly, QtCore.Qt.WindingFill)
+		gc.drawEllipse(QtCore.QPoint(x, y), self.width, self.width)
+		gc.drawEllipse(QtCore.QPoint(x2, y2), self.width, self.width)
+		
+		return pts
+
+
 class ScrollNib(Nib):
 	def __init__(self, width=10, angle=40, split=5, color=QtGui.QColor(125,25,25)):
 		self.__width = width-split
