@@ -17,6 +17,8 @@ import serif
 
 from PyQt4 import QtCore, QtGui
 
+DEBUG_BBOXES = False
+
 class Stroke(shapes.splines.BezierSpline):
 	def __init__(self, dimension=2, fromStroke=None):
 		shapes.splines.BezierSpline.__init__(self, dimension)
@@ -288,6 +290,7 @@ class Stroke(shapes.splines.BezierSpline):
 				         curvePts[i+1][0],curvePts[i+1][1])
 
 				if bboxPts:
+					
 					self.__boundBoxes.append(bboxPts)
 					
 					for pt in bboxPts:
@@ -321,7 +324,13 @@ class Stroke(shapes.splines.BezierSpline):
 						
 			for vert in self.__strokeCtrlVerts:
 				vert.draw(gc)
+
+		if DEBUG_BBOXES:
+			for box in self.__boundBoxes:
+				gc.drawRect(box[0][0], box[0][1], box[1][0]-box[0][0], box[2][1]-box[0][1])
 		
+			gc.drawRect(self.getBoundRect())
+
 		gc.restore()
 		
 	def insideStroke(self, pt):
@@ -365,7 +374,24 @@ class Stroke(shapes.splines.BezierSpline):
 	
 	def getBoundRect(self):
 		return QtCore.QRect(self.__mainBoundBox[0], self.__mainBoundBox[1],
-							self.__mainBoundBox[2], self.__mainBoundBox[3])	
+							self.__mainBoundBox[2]-self.__mainBoundBox[0], 
+							self.__mainBoundBox[3]-self.__mainBoundBox[1])	
+
+	def setBoundRect(self, boundRect):
+		if boundRect is not None:
+			self.__mainBoundBox = [0, 0, 0, 0]
+			(self.__mainBoundBox[0], self.__mainBoundBox[1]) = (boundRect.topLeft().x(), boundRect.topLeft().y())
+			(self.__mainBoundBox[2], self.__mainBoundBox[3]) = (boundRect.bottomRight().x(), boundRect.bottomRight().y())
+		
+	def getBoundBoxes(self, returnCopy=False):
+		if returnCopy:
+			return copy.deepcopy(self.__boundBoxes)
+		else:
+			return self.__boundBoxes
+
+	def setBoundBoxes(self, bboxes):
+		if len(bboxes) > 0:
+			self.__boundBoxes = bboxes
 
 	def getBitmap(self):
 		return self.__bitmapPreview
