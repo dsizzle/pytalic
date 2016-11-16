@@ -1,4 +1,5 @@
 import nibs_qt
+import stroke_qt
 from PyQt4 import QtCore, QtGui
 
 class strokeInstance(object):
@@ -8,6 +9,8 @@ class strokeInstance(object):
 		self.__y = 0
 		self.__instNib = None
 		self.__color = QtGui.QColor(128, 128, 192, 90)
+		self.__boundBoxes = []
+		self.__mainBoundBox = None
 
 	def setPos(self, x, y):
 		self.__x = x
@@ -41,13 +44,21 @@ class strokeInstance(object):
 			self.__nib.fromNib(nib)
 			self.__nib.setColor(self.__color)
 
+		strokeToDraw = stroke_qt.Stroke(fromStroke=self.__stroke)
+
+		#
+		# perform overrides
+		#
+
 		(stroke_x, stroke_y) = self.__stroke.getPos()		
 		gc.save()
 
 		gc.translate(-stroke_x, -stroke_y)
 		gc.translate(self.__x, self.__y)
 
-		self.__stroke.draw(gc, 0, self.__nib, selectedVert)
+		strokeToDraw.draw(gc, 0, self.__nib, selectedVert)
+		self.__mainBoundBox = strokeToDraw.getBoundRect()
+		self.__boundBoxes = strokeToDraw.getBoundBoxes() #True)
 
 		gc.restore()
 
@@ -64,8 +75,18 @@ class strokeInstance(object):
 		pos = self.__stroke.getPos()
 		delta = [pos[0]-self.__x, pos[1]-self.__y]
 
-		normPt = [pt[0]+delta[0], pt[1]+delta[1]] #-self.__x, pt[1]-self.__y]
-		(vertIdx, origbboxIdx, idxPerVert) = self.__stroke.insideStroke(normPt)
+		normPt = [pt[0]+delta[0], pt[1]+delta[1]] 
+
+		if self.__mainBoundBox:
+			strokeToTest = stroke_qt.Stroke(fromStroke=self.__stroke)
+			strokeToTest.setBoundRect(self.__mainBoundBox)
+			strokeToTest.setBoundBoxes(self.__boundBoxes)
+
+			(vertIdx, origbboxIdx, idxPerVert) = strokeToTest.insideStroke(normPt)
+		else:
+			vertIdx = 0
+			origbboxIdx = 0
+			idxPerVert = 0.0
 
 		return vertIdx, origbboxIdx, idxPerVert
 
