@@ -109,8 +109,15 @@ class Nib(object):
 		gc.setPen(pen)
 		gc.drawPolyline(poly)
 		
-		return pts
-	
+		bRect = poly.boundingRect()
+		
+		newPts = [[bRect.topLeft().x(), bRect.topLeft().y()], 
+			[bRect.topRight().x(), bRect.topRight().y()],	
+			[bRect.bottomRight().x(), bRect.bottomRight().y()],
+			[bRect.bottomLeft().x(), bRect.bottomLeft().y()]]
+		
+		return newPts
+
 	def vertNibWidthScale (self, dc, x, y, num=2):
 		tempAngle = self.angle
 		
