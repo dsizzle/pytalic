@@ -853,7 +853,7 @@ class mainDrawingArea(QtGui.QFrame):
 				self.__undoStack.append(command)
 				self.__redoStack[:] = []
 				
-			elif (self.__draggingCtrlPt):
+			elif (self.__draggingCtrlPt and self.__selectedPt):
 				stroke = self.__selection[0]
 				ctrlPts = stroke.getCtrlVertices()
 				doArgs = {}
