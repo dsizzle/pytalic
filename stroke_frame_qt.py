@@ -876,7 +876,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 	 		self.charData.setCurrentChar(newChar)
 			curChar = self.charData.getCurrentChar()
 	 		self.dwgArea.setCharData(curChar)
-	 		self.charSelectorItem.setCurrentItem(newChar)
+	 		self.charSelectorList.setCurrentRow(newChar)
 			
 			self.dwgArea.repaint()
 	
