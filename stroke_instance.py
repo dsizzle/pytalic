@@ -12,7 +12,9 @@ class strokeInstance(object):
 		self.__boundBoxes = []
 		self.__mainBoundBox = None
 		self.__parent = parent
-
+		self.__dkGrayPen = (128,128,128,QtCore.Qt.DotLine) #QtGui.QBrush(QtGui.QColor(128,128,128), wx.SOLID)
+		self.__clearBrush = (0,0,0,QtCore.Qt.NoBrush) #QtGui.QBrush(QtGui.QColor(0,0,0), wx.TRANSPARENT)
+		
 	def __del__(self):
 		if self.__stroke:
 			self.__stroke.removeInstance(self)
@@ -73,9 +75,22 @@ class strokeInstance(object):
 
 		strokeToDraw.draw(gc, 0, self.__nib, selectedVert)
 		self.__mainBoundBox = strokeToDraw.getBoundRect()
+		gc.restore()
+
+		if showCtrlVerts:
+			gc.save()
+
+			gc.translate(self.__x, self.__y)
+			gc.setBrush(QtGui.QBrush(QtGui.QColor(self.__clearBrush[0], self.__clearBrush[1], self.__clearBrush[2]), self.__clearBrush[3]))
+			gc.setPen(QtGui.QPen(QtGui.QColor(self.__dkGrayPen[0], self.__dkGrayPen[1], self.__dkGrayPen[2],128), 2, self.__dkGrayPen[3], QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+		
+			gc.drawRect(self.__mainBoundBox)
+			
+			gc.restore()
+
 		self.__boundBoxes = strokeToDraw.getBoundBoxes() #True)
 
-		gc.restore()
+		
 
 	def getBitmap(self):
 		return self.__stroke.getBitmap()

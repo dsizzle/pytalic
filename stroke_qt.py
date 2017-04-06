@@ -46,7 +46,9 @@ class Stroke(shapes.splines.BezierSpline):
 		self.__bitmapPreview = None
 		self.__instances = {}
 		self.__parent = parent
-
+		self.__dkGrayPen = (128,128,128,QtCore.Qt.DotLine) #QtGui.QBrush(QtGui.QColor(128,128,128), wx.SOLID)
+		self.__clearBrush = (0,0,0,QtCore.Qt.NoBrush) #QtGui.QBrush(QtGui.QColor(0,0,0), wx.TRANSPARENT)
+		
 		self.seed = time.localtime()
 
 	def addInstance(self, inst):
@@ -341,6 +343,11 @@ class Stroke(shapes.splines.BezierSpline):
 						
 			for vert in self.__strokeCtrlVerts:
 				vert.draw(gc)
+
+			gc.setBrush(QtGui.QBrush(QtGui.QColor(self.__clearBrush[0], self.__clearBrush[1], self.__clearBrush[2]), self.__clearBrush[3]))
+			gc.setPen(QtGui.QPen(QtGui.QColor(self.__dkGrayPen[0], self.__dkGrayPen[1], self.__dkGrayPen[2],128), 2, self.__dkGrayPen[3], QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+		
+			gc.drawRect(self.getBoundRect())
 
 		if DEBUG_BBOXES:
 			for box in self.__boundBoxes:
