@@ -82,6 +82,8 @@ class Character(object):
 		if add:
 			self.__strokes.append(myStroke)
 
+		myStroke.setParent(self)
+
 		return myStroke
 		
 	def newFreehandStroke(self, pts):
@@ -110,17 +112,21 @@ class Character(object):
 
 		self.__strokes.append(myStroke)
 
+		myStroke.setParent(self)
 		return myStroke
 		
 	def addStroke (self, strokeToAdd):
 		newStroke = self.copyStroke(strokeToAdd)
 		self.__strokes.append(newStroke)
+		newStroke.setParent(self)
 		return newStroke
 		
 	def addStrokeInstance (self, strokeToAdd):
 		newStrokeInstance = stroke_instance.strokeInstance()
 		newStrokeInstance.setStroke(strokeToAdd)
 		self.__strokes.append(newStrokeInstance)
+		newStrokeInstance.setParent(self)
+
 		return newStrokeInstance
 
 	def copyStroke(self, strokeToCopy):
@@ -131,6 +137,11 @@ class Character(object):
 	def deleteStroke(self, strokeToDelete):
 		try:
 			self.__strokes.remove(strokeToDelete)
+			#if type(strokeToDelete).__name__ == 'instance':
+			#	for inst in strokeToDelete.getInstances():
+			#		parentChar = inst.getParent()
+			#		parentChar.deleteStroke(inst)
+
 		except:
 			print "ERROR: stroke to delete doesn't exist!"
 	

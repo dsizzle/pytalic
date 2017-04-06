@@ -174,13 +174,14 @@ class mainDrawingArea(QtGui.QFrame):
 			if (self.__selection):
 				if (self.__selectedPt >= 0):
 					doArgs = {}
-					doArgs['strokes'] = self.__selection
+					doArgs['strokes'] = self.__selection[:]
 					doArgs['selPt'] = self.__selectedPt
+
 					undoArgs = {}
-					undoArgs['strokes'] = self.__selection
+					undoArgs['strokes'] = self.__selection[:]
 					undoArgs['selPt'] = self.__selectedPt
 					undoArgs['ctrlPts'] = self.__selection[0].getCtrlVertices() 
-					
+							
 					if (len(undoArgs['ctrlPts']) > 2):
 						command = {
 							'undo': self.resetCtrlPointsForSelected, 'undoArgs': undoArgs,
@@ -207,10 +208,16 @@ class mainDrawingArea(QtGui.QFrame):
 					
 				else:
 					doArgs = {}
-					doArgs['strokes'] = self.__selection
+					doArgs['strokes'] = self.__selection[:]
 					undoArgs = {}
-					undoArgs['strokes'] = self.__selection
+					undoArgs['strokes'] = self.__selection[:]
+					for stroke in self.__selection:
+						if type(stroke).__name__ == 'instance':
+							for inst in stroke.getInstances():
+								doArgs['strokes'].append(inst)
+								undoArgs['strokes'].append(inst)
 
+					
 					command = {
 							'undo': self.addStrokes, 'undoArgs': undoArgs, 
 							'do': self.deleteStrokes, 'doArgs': doArgs
@@ -219,9 +226,8 @@ class mainDrawingArea(QtGui.QFrame):
 					self.__undoStack.append(command)
 					self.__redoStack[:] = []
 				
-					for stroke in self.__selection:
-						self.__charData.deleteStroke(stroke)
-					
+					self.deleteStrokes(doArgs)
+
 					self.__selection = []
 				
 				self.repaint()
@@ -233,7 +239,8 @@ class mainDrawingArea(QtGui.QFrame):
 			strokes = args['strokes']
 			
 			for stroke in strokes:
-				self.__charData.deleteStroke(stroke)
+				char = stroke.getParent()
+				char.deleteStroke(stroke)
 				if (stroke in self.__selection):
 					self.__selection.remove(stroke)
 					
@@ -243,9 +250,9 @@ class mainDrawingArea(QtGui.QFrame):
 		if (args.has_key('strokes')):
 			strokes = args['strokes']
 			
-			strokeList = self.__charData.strokes
-			
 			for stroke in strokes:
+				char = stroke.getParent()
+				strokeList = char.strokes
 				strokeList.append(stroke)
 			
 			self.repaint()

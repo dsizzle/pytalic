@@ -20,7 +20,7 @@ from PyQt4 import QtCore, QtGui
 DEBUG_BBOXES = False
 
 class Stroke(shapes.splines.BezierSpline):
-	def __init__(self, dimension=2, fromStroke=None):
+	def __init__(self, dimension=2, fromStroke=None, parent=None):
 		shapes.splines.BezierSpline.__init__(self, dimension)
 		#splines.CatmullRomSpline.__init__(self, 2.0)
 		if fromStroke is not None:
@@ -44,9 +44,20 @@ class Stroke(shapes.splines.BezierSpline):
 		self.__endFlourish = None
 		self.__handleSize = 10
 		self.__bitmapPreview = None
+		self.__instances = {}
+		self.__parent = parent
 
 		self.seed = time.localtime()
+
+	def addInstance(self, inst):
+		self.__instances[inst] = 1
 		
+	def removeInstance(self, inst):
+		self.__instances.pop(inst, None)
+
+	def getInstances(self):
+		return self.__instances.keys()
+
 	def setPos(self, x, y):
 		self.__x = x
 		self.__y = y
@@ -256,6 +267,12 @@ class Stroke(shapes.splines.BezierSpline):
 
 		self.__bitmapPreview = tmpBitmap.scaled(size, size, QtCore.Qt.KeepAspectRatioByExpanding, 1)
 		qp.end()
+
+	def setParent(self, parent):
+		self.__parent = parent
+
+	def getParent(self):
+		return self.__parent
 
 	def draw(self, gc, showCtrlVerts=0, nib=None, selectedVert=-1):
 		self.__boundBoxes = []

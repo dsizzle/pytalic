@@ -3,7 +3,7 @@ import stroke_qt
 from PyQt4 import QtCore, QtGui
 
 class strokeInstance(object):
-	def __init__(self):
+	def __init__(self, parent=None):
 		self.__stroke = None
 		self.__x = 0
 		self.__y = 0
@@ -11,6 +11,11 @@ class strokeInstance(object):
 		self.__color = QtGui.QColor(128, 128, 192, 90)
 		self.__boundBoxes = []
 		self.__mainBoundBox = None
+		self.__parent = parent
+
+	def __del__(self):
+		if self.__stroke:
+			self.__stroke.removeInstance(self)
 
 	def setPos(self, x, y):
 		self.__x = x
@@ -20,6 +25,9 @@ class strokeInstance(object):
 		return (int(self.__x), int(self.__y))
 
 	def setStroke(self, stroke):
+		if self.__stroke:
+			self.__stroke.removeInstance(self)
+
 		self.__stroke = stroke
 		self.__nib = nibs_qt.Nib()
 		tmpNib = stroke.getNib()
@@ -30,10 +38,17 @@ class strokeInstance(object):
 			self.__nib.fromNib(tmpNib)
 			self.__nib.setColor(self.__color)
 			
+		self.__stroke.addInstance(self)
 
 	def getStroke(self):
 		return self.__stroke
 
+	def setParent(self, parent):
+		self.__parent = parent
+
+	def getParent(self):
+		return self.__parent
+	
 	def draw(self, gc, showCtrlVerts=0, nib=None, selectedVert=-1):
 
 		if self.__stroke == None:
