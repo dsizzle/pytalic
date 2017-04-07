@@ -141,13 +141,13 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		editMenu.addAction(editPaste)
 		self.toolBar.addAction(editPaste)
 
-		editPasteInstance = QtGui.QAction("Paste Instance", self)
-		editPasteInstance.setShortcut('Ctrl+Shift+V')
-		editPasteInstance.setIcon(QtGui.QIcon("icons/page_white_paste.png"))
-		editPasteInstance.setIconText("Paste Instance")
-		editPasteInstance.triggered.connect(self.pasteStrokesAsInstances_cb)
-		editMenu.addAction(editPasteInstance)
-		self.toolBar.addAction(editPasteInstance)
+		#editPasteInstance = QtGui.QAction("Paste Instance", self)
+		#editPasteInstance.setShortcut('Ctrl+Shift+V')
+		#editPasteInstance.setIcon(QtGui.QIcon("icons/page_white_paste.png"))
+		#editPasteInstance.setIconText("Paste Instance")
+		#editPasteInstance.triggered.connect(self.pasteStrokesAsInstances_cb)
+		#editMenu.addAction(editPasteInstance)
+		#self.toolBar.addAction(editPasteInstance)
 		
 		#editMenu.addSeparator()
 		self.toolBar.addSeparator()
@@ -259,12 +259,12 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		strokeMenu.addAction(strokeSave)
 
 		strokeLoad = QtGui.QAction("Paste From Saved", self)
-		strokeLoad.triggered.connect(self.pasteFromSaved_cb)
+		strokeLoad.triggered.connect(self.pasteInstanceFromSaved_cb)
 		strokeMenu.addAction(strokeLoad)
 
-		strokeLoadInst = QtGui.QAction("Paste Instance From Saved", self)
-		strokeLoadInst.triggered.connect(self.pasteInstanceFromSaved_cb)
-		strokeMenu.addAction(strokeLoadInst)
+		#strokeLoadInst = QtGui.QAction("Paste Instance From Saved", self)
+		#strokeLoadInst.triggered.connect(self.pasteInstanceFromSaved_cb)
+		#strokeMenu.addAction(strokeLoadInst)
 
 		helpAbout = QtGui.QAction("About", self)
 		helpAbout.triggered.connect(self.about_cb)
@@ -681,7 +681,12 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			curItem = self.strokeSelectorList.item(itemNum)
 			curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
 			self.charData.saveStroke(stroke_qt.Stroke(fromStroke=stroke))
-
+			curChar = self.charData.getCurrentChar()
+			curChar.addStrokeInstance(stroke)			
+			curChar.deleteStroke(stroke)
+		
+		self.dwgArea.repaint()
+			
 	def pasteFromSaved_cb(self, event):
 		strokeSel = self.strokeSelectorList.currentRow()
 		curChar = self.charData.getCurrentChar()
