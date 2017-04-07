@@ -123,6 +123,9 @@ class Character(object):
 		
 	def addStrokeInstance (self, strokeToAdd):
 		newStrokeInstance = stroke_instance.strokeInstance()
+		if not type(strokeToAdd).__name__ == 'instance':
+			strokeToAdd = strokeToAdd.getStroke()
+			
 		newStrokeInstance.setStroke(strokeToAdd)
 		self.__strokes.append(newStrokeInstance)
 		newStrokeInstance.setParent(self)

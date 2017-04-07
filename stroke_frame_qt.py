@@ -651,8 +651,11 @@ class stroke_frame_qt(QtGui.QMainWindow):
 	
 		selectList = []
 		for stroke in self.__clipBoard:
-			selectList.append(curChar.addStroke(stroke))
-			
+			if type(stroke).__name__ == 'instance':
+				selectList.append(curChar.addStroke(stroke))
+			else:
+				selectList.append(curChar.addStrokeInstance(stroke))
+
 		self.dwgArea.setSelectedStrokes(selectList)
 		
 		self.dwgArea.repaint()
