@@ -123,9 +123,9 @@ class Character(object):
 		
 	def addStrokeInstance (self, strokeToAdd):
 		newStrokeInstance = stroke_instance.strokeInstance()
-		if not type(strokeToAdd).__name__ == 'instance':
+		if not isinstance(strokeToAdd, stroke_qt.Stroke):
 			strokeToAdd = strokeToAdd.getStroke()
-			
+
 		newStrokeInstance.setStroke(strokeToAdd)
 		self.__strokes.append(newStrokeInstance)
 		newStrokeInstance.setParent(self)
@@ -140,11 +140,6 @@ class Character(object):
 	def deleteStroke(self, strokeToDelete):
 		try:
 			self.__strokes.remove(strokeToDelete)
-			#if type(strokeToDelete).__name__ == 'instance':
-			#	for inst in strokeToDelete.getInstances():
-			#		parentChar = inst.getParent()
-			#		parentChar.deleteStroke(inst)
-
 		except:
 			print "ERROR: stroke to delete doesn't exist!"
 	

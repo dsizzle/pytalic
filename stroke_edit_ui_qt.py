@@ -212,7 +212,7 @@ class mainDrawingArea(QtGui.QFrame):
 					undoArgs = {}
 					undoArgs['strokes'] = self.__selection[:]
 					for stroke in self.__selection:
-						if type(stroke).__name__ == 'instance':
+						if isinstance(stroke, stroke_qt.Stroke):
 							for inst in stroke.getInstances():
 								doArgs['strokes'].append(inst)
 								undoArgs['strokes'].append(inst)

@@ -651,7 +651,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 	
 		selectList = []
 		for stroke in self.__clipBoard:
-			if type(stroke).__name__ == 'instance':
+			if isinstance(stroke, stroke_qt.Stroke):
 				selectList.append(curChar.addStroke(stroke))
 			else:
 				selectList.append(curChar.addStrokeInstance(stroke))
@@ -675,16 +675,17 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		selectedStrokes = self.dwgArea.getSelectedStrokes()
 
 		for stroke in selectedStrokes:
-			stroke.makePreview(gICON_SIZE)
-			itemNum = self.strokeSelectorList.count()
-			self.strokeSelectorList.addItem(str(itemNum))
-			curItem = self.strokeSelectorList.item(itemNum)
-			curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
-			self.charData.saveStroke(stroke_qt.Stroke(fromStroke=stroke))
-			curChar = self.charData.getCurrentChar()
-			curChar.addStrokeInstance(stroke)			
-			curChar.deleteStroke(stroke)
-		
+			if isinstance(stroke, stroke_qt.Stroke):
+				stroke.makePreview(gICON_SIZE)
+				itemNum = self.strokeSelectorList.count()
+				self.strokeSelectorList.addItem(str(itemNum))
+				curItem = self.strokeSelectorList.item(itemNum)
+				curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
+				self.charData.saveStroke(stroke_qt.Stroke(fromStroke=stroke))
+				curChar = self.charData.getCurrentChar()
+				curChar.addStrokeInstance(stroke)			
+				curChar.deleteStroke(stroke)
+			
 		self.dwgArea.repaint()
 			
 	def pasteFromSaved_cb(self, event):
