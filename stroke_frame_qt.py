@@ -262,6 +262,14 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		strokeLoad.triggered.connect(self.pasteInstanceFromSaved_cb)
 		strokeMenu.addAction(strokeLoad)
 
+		strokeSavedEdit = QtGui.QAction("Edit Saved", self)
+		strokeSavedEdit.triggered.connect(self.editSaved_cb)
+		strokeMenu.addAction(strokeSavedEdit)
+
+		strokeSavedEditDone = QtGui.QAction("Done Editing Saved", self)
+		strokeSavedEditDone.setShortcut('Esc')
+		strokeSavedEditDone.triggered.connect(self.editSavedDone_cb)
+		strokeMenu.addAction(strokeSavedEditDone)
 		#strokeLoadInst = QtGui.QAction("Paste Instance From Saved", self)
 		#strokeLoadInst.triggered.connect(self.pasteInstanceFromSaved_cb)
 		#strokeMenu.addAction(strokeLoadInst)
@@ -680,13 +688,15 @@ class stroke_frame_qt(QtGui.QMainWindow):
 				itemNum = self.strokeSelectorList.count()
 				self.strokeSelectorList.addItem(str(itemNum))
 				curItem = self.strokeSelectorList.item(itemNum)
+				self.strokeSelectorList.setCurrentRow(itemNum)
 				curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
 				self.charData.saveStroke(stroke_qt.Stroke(fromStroke=stroke))
 				curChar = self.charData.getCurrentChar()
 				curChar.deleteStroke(stroke)
 				stroke = self.charData.getSavedStroke(itemNum)
-				curChar.addStrokeInstance(stroke)			
-				
+				selectList = []
+				selectList.append(curChar.addStrokeInstance(stroke))			
+				self.dwgArea.setSelectedStrokes(selectList)
 			
 		self.dwgArea.repaint()
 			
@@ -714,6 +724,47 @@ class stroke_frame_qt(QtGui.QMainWindow):
 
 			self.dwgArea.setSelectedStrokes(selectList)
 		
+			self.dwgArea.repaint()
+
+	def editSaved_cb(self, event):
+		curChar = self.charData.getCurrentChar()
+		stroke = None
+
+		selectedStroke = self.dwgArea.getSelectedStrokes()[0]
+
+		if not isinstance(selectedStroke, stroke_qt.Stroke):
+			parent = selectedStroke.getStroke()
+			for row in range(0, self.strokeSelectorList.count()):
+				tmpStroke = self.charData.getSavedStroke(row) 
+				if tmpStroke == parent:
+					stroke = tmpStroke
+					self.strokeSelectorList.setCurrentRow(row)
+					break
+				else:
+					print tmpStroke, parent
+				
+		if stroke is None:
+			return
+
+		selectList = []
+		selectList.append(curChar.addStroke(stroke,False))
+
+		self.dwgArea.setSelectedStrokes(selectList)
+		self.dwgArea.setInstanceEditMode(True);
+		self.dwgArea.repaint()
+	
+	def editSavedDone_cb(self, event):
+		strokeSel = self.strokeSelectorList.currentRow()
+		curChar = self.charData.getCurrentChar()
+	
+		if strokeSel >= 0:
+			stroke = self.dwgArea.getSelectedStrokes()[0]
+			stroke.makePreview(gICON_SIZE)
+			curItem = self.strokeSelectorList.item(strokeSel)
+			curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
+			curChar = self.charData.getCurrentChar()
+			curChar.deleteStroke(stroke)
+			self.dwgArea.setInstanceEditMode(False);
 			self.dwgArea.repaint()
 
 	def viewToggleGuidelines_cb(self, event):

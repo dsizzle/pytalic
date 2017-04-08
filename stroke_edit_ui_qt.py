@@ -6,6 +6,7 @@ from PyQt4 import QtCore, QtGui, QtSvg, Qt
 
 import guides_qt
 import character_set
+import nibs_qt
 
 class mainDrawingArea(QtGui.QFrame):
 	def __init__(self, parent): 
@@ -33,14 +34,17 @@ class mainDrawingArea(QtGui.QFrame):
 		self.__mouseX = -1
 		self.__mouseY = -1
 		self.__bgColor = QtGui.QColor(240, 240, 230)
+		self.__altbgColor = QtGui.QColor(230, 230, 220)
 		self.__bgBrush = QtGui.QBrush(self.__bgColor, QtCore.Qt.SolidPattern) 
+		self.__instanceBgBrush = QtGui.QBrush(self.__altbgColor, QtCore.Qt.SolidPattern)
 		self.__bgPen = QtGui.QPen(self.__bgColor, 1, QtCore.Qt.SolidLine) #wx.SOLID
 		self.__grayPen = QtGui.QPen(QtGui.QColor(200, 200, 200), 1, QtCore.Qt.SolidLine) 
 		self.__dkGrayPenDashed = QtGui.QPen(QtGui.QColor(100, 100, 100), 2, QtCore.Qt.DashLine)
 		self.__clearBrush = QtGui.QBrush(QtGui.QColor(0,0,0), QtCore.Qt.NoBrush)
 		
 		self.__nib = None
-		
+		self.__instNib = nibs_qt.Nib()
+
 		self.__snapAxially = True
 		self.__snapToNibAxes = False
 		self.__snapToGrid = False
@@ -65,6 +69,7 @@ class mainDrawingArea(QtGui.QFrame):
 
 		self.__last_time = None
 		self.__now_time = None
+		self.__instanceEditMode = False
 
 	def setUndoStack(self, undoStack):
 		self.__undoStack = undoStack
@@ -142,6 +147,9 @@ class mainDrawingArea(QtGui.QFrame):
 	def toggleSnapToStrokes(self):
 		self.__snapToStrokes = not self.__snapToStrokes
 
+	def setInstanceEditMode(self, onoff):
+		self.__instanceEditMode = onoff
+
 	def newStroke(self):
 		self.__newFreehandStroke = 0
 		self.__newStroke = 1
@@ -207,6 +215,10 @@ class mainDrawingArea(QtGui.QFrame):
 					self.__redoStack[:] = []
 					
 				else:
+					if self.__instanceEditMode:
+						QtGui.QWidget.keyReleaseEvent(self, event)
+						return
+
 					doArgs = {}
 					doArgs['strokes'] = self.__selection[:]
 					undoArgs = {}
@@ -751,23 +763,26 @@ class mainDrawingArea(QtGui.QFrame):
 						self.__selectedPt = i
 						self.__selection = [stroke]
 						
-			if (not hit):						
-				for stroke in strokeList:
-					idx, bbox, junk = stroke.insideStroke([xpos, ypos])
-					if idx > 0:
-						insideStrokes.append(stroke)
-					
-				for stroke in insideStrokes:
-					if (shiftDown):
-						if not (stroke in self.__selection):
-							self.__selection.append(stroke)
+			if (not hit):	
+				if self.__instanceEditMode:					
+					insideStrokes.append(self.__selection[0])
+				else:
+					for stroke in strokeList:
+						idx, bbox, junk = stroke.insideStroke([xpos, ypos])
+						if idx > 0:
+							insideStrokes.append(stroke)
+						
+					for stroke in insideStrokes:
+						if (shiftDown):
+							if not (stroke in self.__selection):
+								self.__selection.append(stroke)
+							else:
+								self.__selection.remove(stroke)
 						else:
-							self.__selection.remove(stroke)
-					else:
-						if not (stroke in oldSel): #self.__selection):
-							self.__selection = [stroke]
-							self.repaint()
-							break
+							if not (stroke in oldSel): #self.__selection):
+								self.__selection = [stroke]
+								self.repaint()
+								break
 			
 				## should we check these first so we don't deselect a selected 
 				## while trying to click one of its points?
@@ -1060,8 +1075,12 @@ class mainDrawingArea(QtGui.QFrame):
 			
 		dc = QtGui.QPainter(self)
 		dc.setRenderHint(QtGui.QPainter.Antialiasing)
-			
-		dc.setBackground(self.__bgBrush)
+		bgBrush = self.__bgBrush
+		if self.__instanceEditMode:
+			bgBrush = self.__instanceBgBrush
+
+		dc.setBackground(bgBrush)
+
 		dc.eraseRect(QtCore.QRect(xpos, ypos, xpos+w, ypos+h))
 	
 		if (self.__drawGuidelines):
@@ -1073,12 +1092,17 @@ class mainDrawingArea(QtGui.QFrame):
 		dc.translate(w/2, h/2)
 			
 		if self.__charData:
-			strokeList = self.__charData.strokes
+			nibToUse = self.__nib
+			if self.__instanceEditMode:
+				nibToUse = self.__instNib
+				nibToUse.setColor(QtGui.QColor(100,100,100))
+
+			strokeList = self.__charData.strokes 
 			for stroke in strokeList:
 				if (stroke in self.__selection):
 					stroke.draw(dc, 1, self.__nib, self.__selectedPt)
 				else:
-					stroke.draw(dc, 0, self.__nib)
+					stroke.draw(dc, 0, nibToUse)
 				
 		if (self.__newStroke > 0):
 			dc.setPen(self.__grayPen)

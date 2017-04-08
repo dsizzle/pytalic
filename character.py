@@ -115,10 +115,15 @@ class Character(object):
 		myStroke.setParent(self)
 		return myStroke
 		
-	def addStroke (self, strokeToAdd):
-		newStroke = self.copyStroke(strokeToAdd)
+	def addStroke (self, strokeToAdd, copyStroke=True):
+		if copyStroke:
+			newStroke = self.copyStroke(strokeToAdd)
+			newStroke.setParent(self)
+		else:
+			newStroke = strokeToAdd
+
 		self.__strokes.append(newStroke)
-		newStroke.setParent(self)
+		
 		return newStroke
 		
 	def addStrokeInstance (self, strokeToAdd):
