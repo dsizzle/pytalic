@@ -683,8 +683,10 @@ class stroke_frame_qt(QtGui.QMainWindow):
 				curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
 				self.charData.saveStroke(stroke_qt.Stroke(fromStroke=stroke))
 				curChar = self.charData.getCurrentChar()
-				curChar.addStrokeInstance(stroke)			
 				curChar.deleteStroke(stroke)
+				stroke = self.charData.getSavedStroke(itemNum)
+				curChar.addStrokeInstance(stroke)			
+				
 			
 		self.dwgArea.repaint()
 			
