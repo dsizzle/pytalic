@@ -138,8 +138,13 @@ class Character(object):
 		return newStrokeInstance
 
 	def copyStroke(self, strokeToCopy):
-		copiedStroke = stroke_qt.Stroke(fromStroke=strokeToCopy)
-		
+		if isinstance(strokeToCopy, stroke_qt.Stroke):
+			copiedStroke = stroke_qt.Stroke(fromStroke=strokeToCopy)
+		else:
+			copiedStroke = stroke_instance.strokeInstance()
+			realStrokeToCopy = strokeToCopy.getStroke()
+			copiedStroke.setStroke(realStrokeToCopy)
+
 		return copiedStroke
 		
 	def deleteStroke(self, strokeToDelete):

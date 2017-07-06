@@ -50,7 +50,16 @@ class strokeInstance(object):
 
 	def getParent(self):
 		return self.__parent
-	
+
+	def getNib(self):
+		return self.__nib
+
+	def getStartSerif(self):
+		return self.__stroke.getStartSerif()
+
+	def getEndSerif(self):
+		return self.__stroke.getEndSerif()
+
 	def draw(self, gc, showCtrlVerts=0, nib=None, selectedVert=-1):
 
 		if self.__stroke == None:
