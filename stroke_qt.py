@@ -397,6 +397,9 @@ class Stroke(shapes.splines.BezierSpline):
 		return vertIdx, origbboxIdx, float(bboxIdx)/float(boxesPerVert)
 	
 	def getBoundRect(self):
+		if self.__mainBoundBox is None:
+			return QtCore.QRect(0, 0, 0, 0)
+
 		return QtCore.QRect(self.__mainBoundBox[0], self.__mainBoundBox[1],
 							self.__mainBoundBox[2]-self.__mainBoundBox[0], 
 							self.__mainBoundBox[3]-self.__mainBoundBox[1])	
