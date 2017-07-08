@@ -730,8 +730,12 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		curChar = self.charData.getCurrentChar()
 		stroke = None
 
-		selectedStroke = self.dwgArea.getSelectedStrokes()[0]
-
+		selectedStrokes = self.dwgArea.getSelectedStrokes()
+		if len(selectedStrokes):
+			selectedStroke = selectedStrokes[0]
+		else:
+			return
+			
 		if not isinstance(selectedStroke, stroke_qt.Stroke):
 			parent = selectedStroke.getStroke()
 			for row in range(0, self.strokeSelectorList.count()):
