@@ -7,6 +7,7 @@ from PyQt4 import QtCore, QtGui, QtSvg, Qt
 import guides_qt
 import character_set
 import nibs_qt
+import stroke_qt
 
 class mainDrawingArea(QtGui.QFrame):
 	def __init__(self, parent): 
@@ -66,6 +67,7 @@ class mainDrawingArea(QtGui.QFrame):
 		
 		self.__undoStack = None
 		self.__redoStack = None
+		self.__clipBoard = None
 
 		self.__last_time = None
 		self.__now_time = None
@@ -711,7 +713,47 @@ class mainDrawingArea(QtGui.QFrame):
 			selStroke.updateCtrlVertices()
 			selStroke.calcCurvePoints()
 			self.repaint()
-											
+	
+	def cutSelected(self):
+		self.__clipBoard = []
+	
+		for stroke in self.__selection:
+			self.__clipBoard.append(self.__charData.copyStroke(stroke))
+			self.__charData.deleteStroke(stroke)
+	
+		self.repaint()
+
+	def copySelected(self):
+		self.__clipBoard = []
+	
+		for stroke in self.__selection:
+			self.__clipBoard.append(stroke) #curChar.copyStroke(stroke))
+		
+		self.repaint()
+
+	def pasteSelected(self):
+		selectList = []
+		
+		for stroke in self.__clipBoard:
+			if isinstance(stroke, stroke_qt.Stroke):
+				selectList.append(self.__charData.addStroke(stroke))
+			else:
+				selectList.append(self.__charData.addStrokeInstance(stroke))
+
+		self.setSelectedStrokes(selectList)
+		
+		self.repaint()
+
+	def pasteSelectedAsInstances(self):
+		selectList = []
+		
+		for stroke in self.__clipBoard:
+			selectList.append(self.__charData.addStrokeInstance(stroke))
+			
+		self.setSelectedStrokes(selectList)
+		
+		self.repaint()
+
 	def onLButtonDown(self, event):
 		oldSel = self.__selection
 		

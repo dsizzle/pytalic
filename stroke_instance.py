@@ -99,8 +99,6 @@ class strokeInstance(object):
 
 		self.__boundBoxes = strokeToDraw.getBoundBoxes() #True)
 
-		
-
 	def getBitmap(self):
 		return self.__stroke.getBitmap()
 

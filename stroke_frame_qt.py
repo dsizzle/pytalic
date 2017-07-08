@@ -630,54 +630,17 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		QtGui.qApp.restoreOverrideCursor()
 		self.dwgArea.repaint()
 		
-	# probably should just be "cut_cb" and call view.cut
 	def cutStrokes_cb(self, event):
-		selectedStrokes = self.dwgArea.getSelectedStrokes()
-		self.__clipBoard = []
+		self.dwgArea.cutSelected()
 	
-		curChar = self.charData.getCurrentChar()
-	
-		for stroke in selectedStrokes:
-			self.__clipBoard.append(curChar.copyStroke(stroke))
-			curChar.deleteStroke(stroke)
-	
-		self.dwgArea.repaint()
-	
-	# probably should just be "copy_cb" and call view.copy	
 	def copyStrokes_cb(self, event):
-		selectedStrokes = self.dwgArea.getSelectedStrokes()
-		self.__clipBoard = []
-	
-		curChar = self.charData.getCurrentChar()
-	
-		for stroke in selectedStrokes:
-			self.__clipBoard.append(stroke) #curChar.copyStroke(stroke))
-	
-	# probably should just be "paste_cb" and call view.paste
-	def pasteStrokes_cb(self, event):
-		curChar = self.charData.getCurrentChar()
-	
-		selectList = []
-		for stroke in self.__clipBoard:
-			if isinstance(stroke, stroke_qt.Stroke):
-				selectList.append(curChar.addStroke(stroke))
-			else:
-				selectList.append(curChar.addStrokeInstance(stroke))
+		self.dwgArea.copySelected()
 
-		self.dwgArea.setSelectedStrokes(selectList)
-		
-		self.dwgArea.repaint()
+	def pasteStrokes_cb(self, event):
+		self.dwgArea.pasteSelected()
 	
 	def pasteStrokesAsInstances_cb(self, event):
-		curChar = self.charData.getCurrentChar()
-	
-		selectList = []
-		for stroke in self.__clipBoard:
-			selectList.append(curChar.addStrokeInstance(stroke))
-			
-		self.dwgArea.setSelectedStrokes(selectList)
-		
-		self.dwgArea.repaint()
+		self.dwgArea.pasteSelectedAsInstances()
 	 
 	def saveStroke_cb(self, event):
 		selectedStrokes = self.dwgArea.getSelectedStrokes()
