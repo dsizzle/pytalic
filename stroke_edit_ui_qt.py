@@ -715,38 +715,115 @@ class mainDrawingArea(QtGui.QFrame):
 			self.repaint()
 	
 	def cutSelected(self):
-		self.__clipBoard = []
+		self.__newClipBoard = []
 	
 		for stroke in self.__selection:
-			self.__clipBoard.append(self.__charData.copyStroke(stroke))
-			self.__charData.deleteStroke(stroke)
-	
+			self.__newClipBoard.append(self.__charData.copyStroke(stroke))
+			
+		undoArgs = {}
+		undoArgs['clipboard'] = self.__newClipBoard
+		undoArgs['char'] = self.__charData
+		doArgs = {}
+		doArgs['clipboard'] = self.__newClipBoard
+		doArgs['selection'] = self.__selection[:]
+		doArgs['char'] = self.__charData
+
+		command = {
+				'undo': self.pasteClipboard, 'undoArgs': undoArgs,
+				'do': self.cutClipboard, 'doArgs': doArgs
+				}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		self.cutClipboard(doArgs)
+
 		self.repaint()
 
+	def cutClipboard(self, args):
+		if (args.has_key('char')):
+			self.__charData = args['char']
+
+			if (args.has_key('selection')):
+				for stroke in args['selection']:
+					self.__charData.deleteStroke(stroke)
+
+				if (args.has_key('clipboard')):
+					self.__clipBoard = args['clipboard']
+
+	def pasteClipboard(self, args):
+		if (args.has_key('char')):
+			self.__charData = args['char']
+
+			if (args.has_key('clipboard')):
+				newSel = []
+
+				for stroke in args['clipboard']:
+					if isinstance(stroke, stroke_qt.Stroke):
+						newSel.append(self.__charData.addStroke(stroke))
+					else:
+						newSel.append(self.__charData.addStrokeInstance(stroke))
+
+				self.setSelectedStrokes(newSel)
+	
+	def copyClipboard(self, args):
+		if (args.has_key('char')):
+			self.__charData = args['char']
+
+			if (args.has_key('clipboard')):
+				self.__clipBoard = args['clipboard']
+
 	def copySelected(self):
-		self.__clipBoard = []
+		self.__newClipBoard = []
 	
 		for stroke in self.__selection:
-			self.__clipBoard.append(stroke) #curChar.copyStroke(stroke))
-		
+			self.__newClipBoard.append(self.__charData.copyStroke(stroke))
+			
+		undoArgs = {}
+		undoArgs['clipboard'] = self.__newClipBoard
+		undoArgs['char'] = self.__charData
+		doArgs = {}
+		doArgs['clipboard'] = self.__newClipBoard
+		doArgs['char'] = self.__charData
+
+		command = {
+				'undo': self.pasteClipboard, 'undoArgs': undoArgs,
+				'do': self.copyClipboard, 'doArgs': doArgs
+				}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		self.copyClipboard(doArgs)
+
 		self.repaint()
 
 	def pasteSelected(self):
-		selectList = []
-		
-		for stroke in self.__clipBoard:
-			if isinstance(stroke, stroke_qt.Stroke):
-				selectList.append(self.__charData.addStroke(stroke))
-			else:
-				selectList.append(self.__charData.addStrokeInstance(stroke))
+		self.__newClipBoard = []
+	
+		undoArgs = {}
+		undoArgs['clipboard'] = self.__clipBoard[:]
+		undoArgs['selection'] = self.__selection[:]
+		undoArgs['char'] = self.__charData
+		doArgs = {}
+		doArgs['clipboard'] = self.__clipBoard[:]
+		doArgs['char'] = self.__charData
 
-		self.setSelectedStrokes(selectList)
-		
+		command = {
+				'undo': self.cutClipboard, 'undoArgs': undoArgs,
+				'do': self.pasteClipboard, 'doArgs': doArgs
+				}
+
+		self.__undoStack.append(command)
+		self.__redoStack[:] = []
+
+		self.pasteClipboard(doArgs)
+
 		self.repaint()
 
 	def pasteSelectedAsInstances(self):
 		selectList = []
-		
+
 		for stroke in self.__clipBoard:
 			selectList.append(self.__charData.addStrokeInstance(stroke))
 			
