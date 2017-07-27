@@ -248,6 +248,11 @@ class Stroke(shapes.splines.BezierSpline):
 		self.calcCurvePoints()
 	
 	def makePreview(self, size=200):
+		if self.__mainBoundBox is None:
+			self.__bitmapPreview = QtGui.QPixmap(size, size)
+			self.__bitmapPreview.fill(QtGui.QColor(240, 240, 230))
+			return
+
 		xscale = (self.__mainBoundBox[2]-self.__mainBoundBox[0])*1.25
 		yscale = (self.__mainBoundBox[3]-self.__mainBoundBox[1])*1.25
 
