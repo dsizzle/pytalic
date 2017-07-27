@@ -799,8 +799,11 @@ class mainDrawingArea(QtGui.QFrame):
 		self.repaint()
 
 	def pasteSelected(self):
+		if self.__clipBoard is None:
+			return
+
 		self.__newClipBoard = []
-	
+		
 		undoArgs = {}
 		undoArgs['clipboard'] = self.__clipBoard[:]
 		undoArgs['selection'] = self.__selection[:]
@@ -822,6 +825,9 @@ class mainDrawingArea(QtGui.QFrame):
 		self.repaint()
 
 	def pasteSelectedAsInstances(self):
+		if self.__clipBoard is None:
+			return
+		
 		selectList = []
 
 		for stroke in self.__clipBoard:
