@@ -109,6 +109,13 @@ class strokeInstance(object):
 		return self.__stroke.getBoundRect()
 
 	def insideStroke(self, pt):
+		vertIdx = 0
+		origbboxIdx = 0
+		idxPerVert = 0.0
+
+		if self.__stroke == None:
+			return vertIdx, origbboxIdx, idxPerVert
+
 		pos = self.__stroke.getPos()
 		delta = [pos[0]-self.__x, pos[1]-self.__y]
 
@@ -120,10 +127,6 @@ class strokeInstance(object):
 			strokeToTest.setBoundBoxes(self.__boundBoxes)
 
 			(vertIdx, origbboxIdx, idxPerVert) = strokeToTest.insideStroke(normPt)
-		else:
-			vertIdx = 0
-			origbboxIdx = 0
-			idxPerVert = 0.0
 
 		return vertIdx, origbboxIdx, idxPerVert
 
