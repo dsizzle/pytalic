@@ -19,6 +19,26 @@ class strokeInstance(object):
 		if self.__stroke:
 			self.__stroke.removeInstance(self)
 
+	def __getstate__(self):
+		pickleDict = {
+			"_strokeInstance__x": self.__x, 
+			"_strokeInstance__y": self.__y, 
+			"_strokeInstance__boundBoxes": self.__boundBoxes,
+			"_strokeInstance__mainBoundBox": self.__mainBoundBox,
+			"_strokeInstance__stroke": self.__stroke,
+		}
+
+		return pickleDict
+
+	def __setstate__(self, d):
+		self.__dict__ = d
+
+		self.__instNib = None
+		self.__color = QtGui.QColor(128, 128, 192, 90)
+		self.__dkGrayPen = (128,128,128,QtCore.Qt.DotLine) #QtGui.QBrush(QtGui.QColor(128,128,128), wx.SOLID)
+		self.__clearBrush = (0,0,0,QtCore.Qt.NoBrush) #QtGui.QBrush(QtGui.QColor(0,0,0), wx.TRANSPARENT)
+		
+
 	def setPos(self, x, y):
 		self.__x = x
 		self.__y = y

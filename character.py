@@ -16,6 +16,13 @@ class Character(object):
 		self.__nib = None
 		self.__bitmapPreview = None
 		
+	def __getstate__(self):
+		saveDict = self.__dict__.copy()
+
+		saveDict["_Character__bitmapPreview"] = None
+
+		return saveDict
+
 	def newStroke(self, pts, add=True):
 		myStroke = stroke_qt.Stroke()
 		

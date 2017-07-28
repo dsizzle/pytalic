@@ -1,6 +1,7 @@
 import os
 import os.path
 import sys
+import pickle
 
 import character_set
 import stroke_edit_ui_qt
@@ -770,7 +771,9 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.dwgArea.setCharData(self.charData.getCurrentChar())
 		self.name = (self.__label__ + " - Untitled")
 		self.setWindowTitle(self.name)
-	
+
+		self.strokeSelectorList.clear()
+		
 		self.charSelectorList.setCurrentRow(0)
 	
 		self.charSelected()
@@ -782,10 +785,11 @@ class stroke_frame_qt(QtGui.QMainWindow):
 	
 		self.dwgArea.setUndoStack(self.__undoStack)
 		self.dwgArea.setRedoStack(self.__redoStack)
+	
 	# 					
 	def fileSave_cb(self, event):
 		if self.__fileName__ and os.path.isfile(self.__fileName__):
-			self.charData.serialize(self.__fileName__)
+			self.save(self.__fileName__)
 		else:
 			self.fileSaveAs_cb(event)
 				
@@ -796,7 +800,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		if (fileName):
 			(self.__dirName__, self.__fileName__) = os.path.split(str(fileName))
 				
-			self.charData.serialize(self.__fileName__)
+			self.save(self.__fileName__)
 			self.setWindowTitle(self.__label__ + " - " + self.__fileName__)
 		 		
 	def fileOpen_cb(self):
@@ -805,7 +809,8 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		     "Open Character Set", self.__dirName__, "Character Set Files (*.cs)")
 
 		if (fileName):
-			self.charData.unserialize(fileName)
+			self.load(fileName)
+
 			(self.__dirName__, self.__fileName__) = os.path.split(str(fileName))
 
 			self.name = (self.__label__ + " - " + self.__fileName__)
@@ -814,10 +819,69 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			loadedChars = self.charData.getCharList().keys()
 	 		loadedChars.sort()
 
+			self.dwgArea.setCharData(self.charData.getCurrentChar())
+
+	 		self.strokeSelectorList.clear()
+
+	 		for stroke in self.charData.getSavedStrokes():
+				stroke.makePreview(gICON_SIZE)
+				itemNum = self.strokeSelectorList.count()
+				self.strokeSelectorList.addItem(str(itemNum))
+				curItem = self.strokeSelectorList.item(itemNum)
+				self.strokeSelectorList.setCurrentRow(itemNum)
+				curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
+				
+			self.charSelectorList.setCurrentRow(0)
+			self.charSelected()
+	 		self.nibTypeSelected()
+			self.setNibColor({'color': self.__color__})
+		
+			self.dwgArea.setSelectedStrokes([])
 	 		self.dwgArea.repaint()
 		
 			self.__undoStack[:] = []
 			self.__redoStack[:] = []
+			
+			self.dwgArea.setUndoStack(self.__undoStack)
+			self.dwgArea.setRedoStack(self.__redoStack)
+	
+	def save(self, fileName):
+		try:
+			dataFileFd = open(fileName, 'wb')
+		except IOError:
+			print "ERROR: Couldn't open %s for writing." % (fileName)
+			return 1
+		
+		try:
+			dataPickler = pickle.Pickler(dataFileFd)
+			dataPickler.dump(self.charData)
+		except pickle.PicklingError:
+			print "ERROR: Couldn't serialize data"
+			return 1
+		
+		if dataFileFd:
+			dataFileFd.close()
+
+	def load(self, fileName):
+		try:
+			dataFileFd = open(fileName, 'rb')
+		except IOError:
+			print "ERROR: Couldn't open %s for reading." % (fileName)
+			return 1
+		
+		try:
+			dataPickler = pickle.Unpickler(dataFileFd)		
+			self.charData = dataPickler.load()
+		except pickle.UnpicklingError:
+			print "ERROR: Couldn't unserialize data"
+			return 1
+		except:
+			print "ERROR: OTHER"
+			return 1
+
+		if dataFileFd:
+			dataFileFd.close()
+				
 	# 		
 	def createNewStroke_cb(self, event):
 		curChar = self.charSelectorList.currentItem()
