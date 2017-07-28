@@ -249,9 +249,7 @@ class Stroke(shapes.splines.BezierSpline):
 	
 	def makePreview(self, size=200):
 		if self.__mainBoundBox is None:
-			self.__bitmapPreview = QtGui.QPixmap(size, size)
-			self.__bitmapPreview.fill(QtGui.QColor(240, 240, 230))
-			return
+			self.calculateRoughBoundRect()
 
 		xscale = (self.__mainBoundBox[2]-self.__mainBoundBox[0])*1.25
 		yscale = (self.__mainBoundBox[3]-self.__mainBoundBox[1])*1.25
@@ -401,9 +399,34 @@ class Stroke(shapes.splines.BezierSpline):
 		
 		return vertIdx, origbboxIdx, float(bboxIdx)/float(boxesPerVert)
 	
+	def calculateRoughBoundRect(self):
+		minX = 9999
+		minY = 9999
+		maxX = 0
+		maxY = 0
+		
+		curvePts = self.getCurvePoints()
+		
+		for i in range(0, (len(curvePts)-1)):
+			
+			if ((curvePts[i][0] == 0.0) and (curvePts[i][1] == 0.0)) and \
+			   ((curvePts[i+1][0] == 0.0) and (curvePts[i+1][1] == 0.0)):
+			   	continue
+			else:
+				if curvePts[i][0] < minX:
+					minX = curvePts[i][0]
+				if curvePts[i][1] < minY:
+					minY = curvePts[i][1]
+				if curvePts[i][0] > maxX:
+					maxX = curvePts[i][0]
+				if curvePts[i][1] > maxY:
+					maxY = curvePts[i][1]
+			
+		self.__mainBoundBox = [minX, minY, maxX, maxY]
+
 	def getBoundRect(self):
 		if self.__mainBoundBox is None:
-			return QtCore.QRect(0, 0, 0, 0)
+			self.calculateRoughBoundRect()
 
 		return QtCore.QRect(self.__mainBoundBox[0], self.__mainBoundBox[1],
 							self.__mainBoundBox[2]-self.__mainBoundBox[0], 
