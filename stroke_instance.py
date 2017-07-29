@@ -20,15 +20,13 @@ class strokeInstance(object):
 			self.__stroke.removeInstance(self)
 
 	def __getstate__(self):
-		pickleDict = {
-			"_strokeInstance__x": self.__x, 
-			"_strokeInstance__y": self.__y, 
-			"_strokeInstance__boundBoxes": self.__boundBoxes,
-			"_strokeInstance__mainBoundBox": self.__mainBoundBox,
-			"_strokeInstance__stroke": self.__stroke,
-		}
+		saveDict = self.__dict__.copy()
 
-		return pickleDict
+		saveDict["_strokeInstance__nib"] = None
+		saveDict["_strokeInstance__instNib"] = None
+		saveDict["_strokeInstance__parent"] = None
+
+		return saveDict
 
 	def __setstate__(self, d):
 		self.__dict__ = d
