@@ -57,3 +57,11 @@ class character_set(object):
 			return self.__savedStrokes[idx]
 		else:
 			return None
+
+	def setSavedStroke(self, idx, stroke):
+		if len(self.__savedStrokes) < idx:
+			return 
+
+		tmpStroke = self.__savedStrokes[idx]
+		self.__savedStrokes[idx] = stroke
+		del(tmpStroke)

@@ -37,7 +37,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 		self.__fileName__ = None
 		self.__dirName__ = os.getcwd()
 		self.__mainNib__ = None 
-			
+		self.__tempChar__ = None	
 		self.fileNew_cb()
 
 	def createMenu(self):
@@ -691,47 +691,68 @@ class stroke_frame_qt(QtGui.QMainWindow):
 			self.dwgArea.repaint()
 
 	def editSaved_cb(self, event):
-		curChar = self.charData.getCurrentChar()
-		stroke = None
+		if self.strokeSelectorList.count() == 0:
+			return
+
+		strokeSel = self.strokeSelectorList.currentRow()
+
+		if strokeSel < 0:
+			return
 
 		selectedStrokes = self.dwgArea.getSelectedStrokes()
-		if len(selectedStrokes):
-			selectedStroke = selectedStrokes[0]
-		else:
-			return
-			
-		if not isinstance(selectedStroke, stroke_qt.Stroke):
-			parent = selectedStroke.getStroke()
-			for row in range(0, self.strokeSelectorList.count()):
-				tmpStroke = self.charData.getSavedStroke(row) 
-				if tmpStroke == parent:
-					stroke = tmpStroke
-					self.strokeSelectorList.setCurrentRow(row)
-					break
-				else:
-					print tmpStroke, parent
-				
-		if stroke is None:
-			return
+		curChar = self.charData.getCurrentChar()
 
+		stroke = self.charData.getSavedStroke(strokeSel)
 		selectList = []
-		selectList.append(curChar.addStroke(stroke,False))
+		selectList.append(curChar.addStroke(stroke))
 
 		self.dwgArea.setSelectedStrokes(selectList)
 		self.dwgArea.setInstanceEditMode(True);
 		self.dwgArea.repaint()
+
+
+		# if len(selectedStrokes):
+		# 	selectedStroke = selectedStrokes[0]
+		# else:
+		# 	return
+			
+		# if not isinstance(selectedStroke, stroke_qt.Stroke):
+		# 	parent = selectedStroke.getStroke()
+		# 	for row in range(0, self.strokeSelectorList.count()):
+		# 		tmpStroke = self.charData.getSavedStroke(row) 
+		# 		if tmpStroke == parent:
+		# 			stroke = tmpStroke
+		# 			self.strokeSelectorList.setCurrentRow(row)
+		# 			break
+		# 		else:
+		# 			print tmpStroke, parent
+				
+		# if stroke is None:
+		# 	return
+
+		# selectList = []
+		# selectList.append(curChar.addStroke(stroke,False))
+
+		# self.dwgArea.setSelectedStrokes(selectList)
+		# self.dwgArea.setInstanceEditMode(True);
+		# self.dwgArea.repaint()
 	
 	def editSavedDone_cb(self, event):
 		strokeSel = self.strokeSelectorList.currentRow()
-		curChar = self.charData.getCurrentChar()
-	
+		
 		if strokeSel >= 0:
 			stroke = self.dwgArea.getSelectedStrokes()[0]
 			stroke.makePreview(gICON_SIZE)
 			curItem = self.strokeSelectorList.item(strokeSel)
 			curItem.setIcon(QtGui.QIcon(stroke.getBitmap()))
 			curChar = self.charData.getCurrentChar()
+			oldStroke = self.charData.getSavedStroke(strokeSel)
+			ctrlVerts = stroke.getCtrlVertices()
+			oldStroke.setCtrlVertices(ctrlVerts)
+			oldStroke.calcCurvePoints()
+
 			curChar.deleteStroke(stroke)
+			
 			self.dwgArea.setInstanceEditMode(False);
 			self.dwgArea.repaint()
 
@@ -881,7 +902,7 @@ class stroke_frame_qt(QtGui.QMainWindow):
 
 		if dataFileFd:
 			dataFileFd.close()
-				
+
 	# 		
 	def createNewStroke_cb(self, event):
 		curChar = self.charSelectorList.currentItem()
